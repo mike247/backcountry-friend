@@ -3,8 +3,8 @@ import { useTheme, MD3Theme, Text } from "react-native-paper";
 import MapView, { UrlTile } from "react-native-maps";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const MAPTILER_API_KEY = "Qt785BgyGLt4XZ7bFUK7";
-const LINZ_API_KEY = "384d440d6f6442698d19b6735ec4ebd7";
+const MAPTILER_API_KEY = "JUNK";
+const LINZ_API_KEY = "JUNK";
 
 const styles = (theme: MD3Theme) =>
   StyleSheet.create({
