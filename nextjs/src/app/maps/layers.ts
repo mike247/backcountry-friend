@@ -1,4 +1,4 @@
-import L, { map } from "leaflet";
+import L from "leaflet";
 
 const baseMapMeta = {
   // ubdomains: "abcd",
@@ -17,7 +17,7 @@ const TOPO_50 = "50767";
 
 export const mapMeta = {
   center: L.latLng(-44.6943, 169.1417),
-  zoom: 9,
+  zoom: 7,
   maxZoom: 16,
   minZoom: 7,
 };
@@ -81,17 +81,6 @@ export const slopeLayers = [
 
 export const shadeLayers = [
   {
-    title: "Shade @ 3pm",
-    url: "https://api.maptiler.com/tiles/0196d40a-3477-7aed-bfc4-9633c4bed24c/{z}/{x}/{y}.png?key=CfIwvWtiGC3IfO0ptpFE",
-    meta: {
-      minZoom: mapMeta.minZoom,
-      maxZoom: mapMeta.maxZoom,
-      maxNativeZoom: 11,
-      minNativeZoom: 11,
-      opacity: 0.5,
-    },
-  },
-  {
     title: "Shade @ 9am",
     url: "https://api.maptiler.com/tiles/0196d6cd-9379-713b-a7d4-8536d7d0c9e9/{z}/{x}/{y}.png?key=CfIwvWtiGC3IfO0ptpFE",
     meta: {
@@ -99,6 +88,28 @@ export const shadeLayers = [
       maxZoom: mapMeta.maxZoom,
       maxNativeZoom: 10,
       minNativeZoom: 10,
+      opacity: 0.5,
+    },
+  },
+  {
+    title: "Shade @ noon",
+    url: "https://api.maptiler.com/tiles/0196d738-16db-7fe0-9d0d-ab9caa809b01/{z}/{x}/{y}.png?key=CfIwvWtiGC3IfO0ptpFE",
+    meta: {
+      minZoom: mapMeta.minZoom,
+      maxZoom: mapMeta.maxZoom,
+      maxNativeZoom: 10,
+      minNativeZoom: 10,
+      opacity: 0.5,
+    },
+  },
+  {
+    title: "Shade @ 3pm",
+    url: "https://api.maptiler.com/tiles/0196d40a-3477-7aed-bfc4-9633c4bed24c/{z}/{x}/{y}.png?key=CfIwvWtiGC3IfO0ptpFE",
+    meta: {
+      minZoom: mapMeta.minZoom,
+      maxZoom: mapMeta.maxZoom,
+      maxNativeZoom: 11,
+      minNativeZoom: 11,
       opacity: 0.5,
     },
   },

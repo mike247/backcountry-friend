@@ -8,7 +8,7 @@ import { coreMaps, slopeLayers, shadeLayers, mapMeta } from "../maps/layers";
 
 const Map = () => {
   const [map, setMap] = useState<L.Map | null>();
-  const [zoomLevel, setZoomLevel] = useState(10);
+  const [zoomLevel, setZoomLevel] = useState(7);
   useEffect(() => {
     setMap(L.map("map", mapMeta));
   }, []);
@@ -25,17 +25,15 @@ const Map = () => {
       overlayMaps["Slope"] = slopeLayerGroup;
 
       shadeLayers.forEach((layer) => {
-        overlayMaps[layer.title] = L.tileLayer(layer.url, layer.meta);
+        baseMaps[layer.title] = L.tileLayer(layer.url, layer.meta);
       });
 
       const coreMapGroup = L.layerGroup(
         coreMaps.map((layer) => L.tileLayer(layer.url, layer.meta))
       );
-
       map.addLayer(coreMapGroup);
 
       L.control.layers(baseMaps, overlayMaps).addTo(map);
-
       map.on("zoomend", () => {
         const zoom = map.getZoom();
         setZoomLevel(zoom);
