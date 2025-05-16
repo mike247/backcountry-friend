@@ -23,3 +23,4 @@ expo-env.d.ts
 *.env
 
 *.shp
+mapProcessing/topo50/AW27_GeoTifv2-04.tif.aux.xml
