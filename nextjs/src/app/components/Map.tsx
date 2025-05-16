@@ -1,50 +1,31 @@
 "use client";
-import L from "leaflet";
+import { MapContainer, TileLayer, LayersControl } from "react-leaflet";
+import { coreMaps, mapMeta, slopeLayers, shadeLayers } from "../maps/layers";
+import { MapContext } from "../context/mapContext";
 
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState } from "react";
-
-import { coreMaps, slopeLayers, shadeLayers, mapMeta } from "../maps/layers";
+import { useContext } from "react";
 
 const Map = () => {
-  const [map, setMap] = useState<L.Map | null>();
-  const [zoomLevel, setZoomLevel] = useState(7);
-  useEffect(() => {
-    setMap(L.map("map", mapMeta));
-  }, []);
-
-  useEffect(() => {
-    const baseMaps: { [key: string]: L.TileLayer | L.LayerGroup } = {};
-    const overlayMaps: { [key: string]: L.TileLayer | L.LayerGroup } = {};
-
-    if (map) {
-      const slopeLayerGroup = L.layerGroup(
-        slopeLayers.map((layer) => L.tileLayer(layer.url, layer.meta))
-      );
-
-      overlayMaps["Slope"] = slopeLayerGroup;
-
-      shadeLayers.forEach((layer) => {
-        baseMaps[layer.title] = L.tileLayer(layer.url, layer.meta);
-      });
-
-      const coreMapGroup = L.layerGroup(
-        coreMaps.map((layer) => L.tileLayer(layer.url, layer.meta))
-      );
-      map.addLayer(coreMapGroup);
-
-      L.control.layers(baseMaps, overlayMaps).addTo(map);
-      map.on("zoomend", () => {
-        const zoom = map.getZoom();
-        setZoomLevel(zoom);
-        console.log(zoom);
-      });
-    }
-  }, [map]);
+  const { showSlope, activeShade } = useContext(MapContext);
+  // if (typeof window === "undefined") return <></>;
+  const coreTiles = coreMaps.map((layer) => (
+    <TileLayer key={layer.title} url={layer.url} {...layer.meta} />
+  ));
+  const slopeTiles = slopeLayers.map((layer) => (
+    <TileLayer key={layer.title} url={layer.url} {...layer.meta} />
+  ));
+  const shadeTiles = shadeLayers.map((layer) => (
+    <TileLayer key={layer.title} url={layer.url} {...layer.meta} />
+  ));
 
   return (
-    <div id="map" className="w-full h-full">
-      <span>{zoomLevel}</span>
+    <div style={{ width: "100vw", height: "100%" }}>
+      <MapContainer {...mapMeta}>
+        {coreTiles}
+        {showSlope && slopeTiles}
+        {shadeTiles[activeShade]}
+      </MapContainer>
     </div>
   );
 };

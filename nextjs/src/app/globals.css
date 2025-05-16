@@ -32,10 +32,10 @@ body {
   background-color: rgba(0, 0, 0, 0) !important;
 }
 
-.leaflet-control-layers-list {
-  background-color: rgb(33, 41, 54) !important;
-  padding: 15px;
-  border-radius: 10px;
-  color: #eee;
-  transition: 2s;
+.above-map {
+  z-index: 1000;
+}
+
+.leaflet-container {
+  height: 100%;
 }

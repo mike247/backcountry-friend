@@ -1,13 +1,24 @@
-import Map from "./components/Map";
+"use client";
 import NavBar from "./components/NavBar";
+import MapControl from "./components/MapControl.tsx";
+import dynamic from "next/dynamic";
+import { MapProvider } from "./context/mapContext.tsx";
+
+const DynamicMap = dynamic(() => import("./components/Map.tsx"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
 
 export default function Home() {
   return (
-    <div>
-      <NavBar />
-      <div className="flex  h-screen justify-center items-center">
-        <Map />
+    <MapProvider>
+      <div className="flex flex-col h-screen">
+        <NavBar />
+        <div className="flex-grow">
+          <DynamicMap />
+          <MapControl />
+        </div>
       </div>
-    </div>
+    </MapProvider>
   );
 }

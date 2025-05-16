@@ -1,4 +1,4 @@
-import L from "leaflet";
+import { LatLngTuple } from "leaflet";
 
 const baseMapMeta = {
   // ubdomains: "abcd",
@@ -16,10 +16,10 @@ const TOPO_250 = "50798";
 const TOPO_50 = "50767";
 
 export const mapMeta = {
-  center: L.latLng(-44.6943, 169.1417),
-  zoom: 7,
+  center: [-44.6943, 169.1417] as LatLngTuple,
+  zoom: 8,
   maxZoom: 16,
-  minZoom: 7,
+  minZoom: 6,
 };
 
 export const coreMaps = [
