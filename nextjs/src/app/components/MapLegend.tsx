@@ -7,13 +7,24 @@ const Gradient = ({
 }: {
   gradient: { min: string; mid: string; max: string };
 }) => {
+  console.log(
+    `w-auto h-6 sm:h-36 sm:w-6 bg-white bg-gradient-to-r from-[${gradient.min}]  to-[${gradient.max}]`
+  );
   return (
-    <div
-      className="w-auto h-6 sm:h-36 sm:w-6 bg-lime-200"
-      style={{
-        backgroundImage: `linear-gradient(${gradient.min}, ${gradient.mid}, ${gradient.max})`,
-      }}
-    />
+    <>
+      <div
+        className={`w-auto h-6 sm:h-36 sm:w-6 bg-white hidden sm:block`}
+        style={{
+          backgroundImage: `linear-gradient(${gradient.min}, ${gradient.mid}, ${gradient.max})`,
+        }}
+      />
+      <div
+        className={`w-auto h-6 sm:h-36 sm:w-6 bg-white sm:hidden`}
+        style={{
+          backgroundImage: `linear-gradient(to right, ${gradient.min}, ${gradient.mid}, ${gradient.max})`,
+        }}
+      />
+    </>
   );
 };
 
