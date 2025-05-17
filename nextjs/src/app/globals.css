@@ -39,3 +39,9 @@ body {
 .leaflet-container {
   height: 100%;
 }
+
+@media only screen and (max-width: 640px) {
+  .leaflet-control-zoom {
+    visibility: hidden;
+  }
+}

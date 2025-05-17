@@ -1,6 +1,6 @@
 const SearchBox = () => {
   return (
-    <div className="w-full max-w-sm min-w-[200px]">
+    <div className="w-full max-w-sm min-w-[160px] ml-2">
       <div className="relative">
         <input
           className=" w-full leading-none bg-white placeholder:text-slate-400 text-slate-700 rounded-md pl-3 pr-16 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm"

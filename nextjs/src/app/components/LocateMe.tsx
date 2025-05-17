@@ -4,7 +4,7 @@ import { useMap } from "react-leaflet";
 const LocateMe = () => {
   const map = useMap();
   return (
-    <div className="absolute top-20 left-2 above-map">
+    <div className="absolute top-2 sm:top-20 left-2 above-map">
       <Image
         src="/icons/gps.svg"
         alt="Locate me"

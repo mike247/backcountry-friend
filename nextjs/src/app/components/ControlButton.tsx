@@ -23,11 +23,11 @@ const ControlButton = ({
     <button
       className={`${
         colors[variant] || "bg-slate - 700"
-      } pl-2 pr-2 pt-1 pb-1 flex flex-col justify-center rounded-md ml-1 mr-1`}
+      } px-2 py-1 flex flex-col flex-grow justify-center items-center rounded-md ml-1 mr-1`}
       onClick={onClick}
     >
-      <Image src={icon} alt={alt} width={45} height={45} title={title} />
-      <label>{label}</label>
+      <Image src={icon} alt={alt} width={30} height={30} title={title} />
+      <label className="text-sm">{label}</label>
     </button>
   );
 };

@@ -4,26 +4,13 @@ import { MapContext } from "../context/mapContext";
 import ControlButton from "./ControlButton";
 
 const MapControl = () => {
-  const [controlHidden, setControlHidden] = useState(true);
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { showSlope, toggleShowSlope, activeShade, toggleActiveShade } =
     useContext(MapContext);
   return (
-    <div className="top-12 right-0 absolute above-map m-2 cursor-pointer flex items-center">
+    <div className="fixed bottom-0 sm:bottom-auto sm:top-12 sm:right-0 sm:absolute above-map sm:m-2 cursor-pointer flex items-center">
       <div
-        onMouseEnter={() => {
-          if (timeoutId.current) clearTimeout(timeoutId.current);
-          setControlHidden(false);
-        }}
-        onMouseLeave={() => {
-          if (timeoutId.current) clearTimeout(timeoutId.current);
-          timeoutId.current = setTimeout(() => {
-            setControlHidden(true);
-          }, 1500);
-        }}
-        className={`${
-          controlHidden ? "invisible opacity-0" : "visible opacity-100"
-        } control-layer flex cursor-pointer relative mr-2 transition-all duration-200 bg-slate-900/75 pl-1 pr-1 pt-2 pb-2 rounded-lg text-white`}
+        className={`w-screen sm:w-auto control-layer flex cursor-pointer relative transition-all duration-200 bg-slate-900/75 px-1 pt-2 pb-2 sm:rounded-lg text-white`}
       >
         <ControlButton
           icon="/icons/avalanche.svg"
@@ -64,15 +51,7 @@ const MapControl = () => {
         alt="Layer menu"
         width={60}
         height={60}
-        onMouseEnter={() => {
-          setControlHidden(!controlHidden);
-          timeoutId.current = setTimeout(() => {
-            setControlHidden(true);
-          }, 3000);
-        }}
-        className={`${
-          controlHidden ? "hover:scale-110" : "scale-110"
-        } duration-200 transition-all`}
+        className={`duration-200 transition-all hidden`}
       />
     </div>
   );
