@@ -100,9 +100,9 @@ export const shadeLayers = {
       mid: "rgba(255,255,255,0)",
       min: "#f0ff00",
     },
-    minText: "100% light",
+    minText: "100% Light",
     midText: "",
-    maxText: "0% LIGHT",
+    maxText: "0% Light",
   },
   layers: [
     {

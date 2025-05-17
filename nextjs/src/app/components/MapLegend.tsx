@@ -9,7 +9,7 @@ const Gradient = ({
 }) => {
   return (
     <div
-      className="h-36 w-6 bg-lime-200 mb-2 mt-2"
+      className="w-auto h-6 sm:h-36 sm:w-6 bg-lime-200"
       style={{
         backgroundImage: `linear-gradient(${gradient.min}, ${gradient.mid}, ${gradient.max})`,
       }}
@@ -31,7 +31,7 @@ const LegendKey = ({
   maxText: string;
 }) => {
   return (
-    <div className="flex flex-col justify-between mt-1 mb-1 mr-2 text-right">
+    <div className="flex sm:flex-col justify-between m-2 text-right">
       <LegendText text={minText} />
       <LegendText text={midText} />
       <LegendText text={maxText} />
@@ -41,23 +41,26 @@ const LegendKey = ({
 
 const MapLegend = () => {
   const { showSlope, activeShade } = useContext(MapContext);
+  console.log(showSlope);
   return (
-    <div className="bottom-4 right-4 absolute above-map flex">
-      <div
-        className={`${
-          activeShade >= 0 ? "visible" : "hidden"
-        } flex bg-slate-800/75 pl-2 pr-2 m-2 rounded-lg justify-end`}
-      >
-        <LegendKey {...shadeLayers.legend} />
-        <Gradient gradient={shadeLayers.legend.gradient} />
-      </div>
-      <div
-        className={`${
-          showSlope ? "visible" : "hidden"
-        } flex bg-slate-800/75 pl-2 pr-2 m-2 rounded-lg justify-end`}
-      >
-        <LegendKey {...slopeLayers.legend} />
-        <Gradient gradient={slopeLayers.legend.gradient} />
+    <div className="w-screen sm:w-auto flex bottom-[75px] sm:bottom-4 sm:right-4 absolute text-white">
+      <div className="flex-grow mx-2  relative above-map flex-col sm:flex sm:items-end">
+        {activeShade >= 0 && (
+          <div
+            className={`flex-col sm:flex sm:flex-row justify-end bg-slate-800/75 rounded-lg overflow-hidden my-1 sm:flex`}
+          >
+            <LegendKey {...shadeLayers.legend} />
+            <Gradient gradient={shadeLayers.legend.gradient} />
+          </div>
+        )}
+        {showSlope && (
+          <div
+            className={`flex-col sm:flex sm:flex-row justify-end bg-slate-800/75 rounded-lg overflow-hidden my-1`}
+          >
+            <LegendKey {...slopeLayers.legend} />
+            <Gradient gradient={slopeLayers.legend.gradient} />
+          </div>
+        )}
       </div>
     </div>
   );
