@@ -58,35 +58,13 @@ export const slopeLayers = {
   },
   layers: [
     {
-      title: "Slope layer 13",
-      url: maptilerUrlBuilder("0196d69e-1b6d-7600-bbe7-3a77b6700c22"),
-      meta: {
-        minZoom: 13,
-        maxZoom: mapMeta.maxZoom,
-        maxNativeZoom: 13,
-        minNativeZoom: 13,
-        opacity: 0.5,
-      },
-    },
-    {
-      title: "Slope layer 10",
-      url: maptilerUrlBuilder("0196d693-b911-717d-9a3d-da05cab96398"),
-      meta: {
-        minZoom: 10,
-        maxZoom: 12,
-        maxNativeZoom: 10,
-        minNativeZoom: 10,
-        opacity: 0.5,
-      },
-    },
-    {
-      title: "Slope layer 8",
-      url: maptilerUrlBuilder("0196d693-28d0-7094-9884-1f01c1c29aef"),
+      title: "Slope layer",
+      url: maptilerUrlBuilder(process.env.NEXT_PUBLIC_SLOPE_TILE_ID || ""),
       meta: {
         minZoom: mapMeta.minZoom,
-        maxZoom: 9,
-        maxNativeZoom: 8,
-        minNativeZoom: 8,
+        maxZoom: mapMeta.maxZoom,
+        maxNativeZoom: 13,
+        minNativeZoom: 6,
         opacity: 0.5,
       },
     },
@@ -107,7 +85,7 @@ export const shadeLayers = {
   layers: [
     {
       title: "Shade @ 9am",
-      url: maptilerUrlBuilder("0196d6cd-9379-713b-a7d4-8536d7d0c9e9"),
+      url: maptilerUrlBuilder(process.env.NEXT_PUBLIC_SHADE_9AM_TILE_ID || ""),
       meta: {
         minZoom: mapMeta.minZoom,
         maxZoom: mapMeta.maxZoom,
@@ -118,7 +96,7 @@ export const shadeLayers = {
     },
     {
       title: "Shade @ noon",
-      url: maptilerUrlBuilder("0196d738-16db-7fe0-9d0d-ab9caa809b01"),
+      url: maptilerUrlBuilder(process.env.NEXT_PUBLIC_SHADE_NOON_TILE_ID || ""),
       meta: {
         minZoom: mapMeta.minZoom,
         maxZoom: mapMeta.maxZoom,
@@ -129,7 +107,7 @@ export const shadeLayers = {
     },
     {
       title: "Shade @ 3pm",
-      url: maptilerUrlBuilder("0196d40a-3477-7aed-bfc4-9633c4bed24c"),
+      url: maptilerUrlBuilder(process.env.NEXT_PUBLIC_SHADE_3PM_TILE_ID || ""),
       meta: {
         minZoom: mapMeta.minZoom,
         maxZoom: mapMeta.maxZoom,
