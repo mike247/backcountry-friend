@@ -7,9 +7,6 @@ const Gradient = ({
 }: {
   gradient: { min: string; mid: string; max: string };
 }) => {
-  console.log(
-    `w-auto h-6 sm:h-36 sm:w-6 bg-white bg-gradient-to-r from-[${gradient.min}]  to-[${gradient.max}]`
-  );
   return (
     <>
       <div
@@ -52,7 +49,6 @@ const LegendKey = ({
 
 const MapLegend = () => {
   const { showSlope, activeShade } = useContext(MapContext);
-  console.log(showSlope);
   return (
     <div className="w-screen sm:w-auto flex bottom-[75px] sm:bottom-4 sm:right-4 absolute text-white">
       <div className="flex-grow mx-2  relative above-map flex-col sm:flex sm:items-end">

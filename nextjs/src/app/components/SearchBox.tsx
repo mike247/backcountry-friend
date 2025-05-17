@@ -1,11 +1,76 @@
+import { useContext, useEffect, useState } from "react";
+import { GeocodingFeature } from "@maptiler/client";
+import Image from "next/image";
+import { MapContext } from "../context/mapContext";
+
+const SearchResults = ({
+  features,
+  handleSelect,
+}: {
+  features: GeocodingFeature[];
+  handleSelect: (feature: GeocodingFeature) => void;
+}) => {
+  const results = features.map((feature) => {
+    return (
+      <div
+        key={feature.id}
+        className="my-2 bg-slate-100 rounded-md p-2 text-slate-950 flex cursor-pointer"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={() => handleSelect(feature)}
+      >
+        <Image
+          src="/icons/search_result.svg"
+          alt="search result icon"
+          height={20}
+          width={20}
+          className="mr-1"
+        />
+        <span>{feature.text}</span>
+      </div>
+    );
+  });
+  return <>{results}</>;
+};
+
 const SearchBox = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<GeocodingFeature[]>();
+  const [hideResults, setHideResults] = useState(false);
+  const { map } = useContext(MapContext);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchTerm.length > 0) {
+        handleSearch(searchTerm);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
+
+  const handleSearch = async (search: string) => {
+    const results = await fetch(`/api/search?string=${search}`);
+    const data = await results.json();
+    setSearchResults(data);
+  };
+
+  const handleSelect = (feature: GeocodingFeature) => {
+    setHideResults(true);
+    map.current?.setView([feature.center[1], feature.center[0]], 14);
+  };
+
   return (
-    <div className="w-full max-w-sm min-w-[160px] ml-2">
+    <div
+      className="w-full max-w-sm min-w-[160px] ml-2"
+      onBlur={() => setHideResults(true)}
+      onFocus={() => setHideResults(false)}
+      onClick={() => setHideResults(false)}
+    >
       <div className="relative">
         <input
           className=" w-full leading-none bg-white placeholder:text-slate-400 text-slate-700 rounded-md pl-3 pr-16 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm"
-          placeholder="Location search, coming soon..."
-          disabled={true}
+          placeholder="Location search, sort of working..."
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
         <button
           className="absolute top-1 right-1 flex items-center rounded bg-slate-800 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
@@ -26,6 +91,11 @@ const SearchBox = () => {
           </svg>
         </button>
       </div>
+      {searchResults && !hideResults && (
+        <div className="absolute z-[10001] top-12 bg-slate-800 px-2 rounded-md">
+          <SearchResults features={searchResults} handleSelect={handleSelect} />
+        </div>
+      )}
     </div>
   );
 };

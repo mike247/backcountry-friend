@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@maptiler/client": "^2.3.2",
     "leaflet": "^1.9.4",
     "next": "15.1.0",
     "ol": "^10.3.0",
