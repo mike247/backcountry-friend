@@ -1,10 +1,9 @@
 import Image from "next/image";
-import { useContext, useRef, useState } from "react";
+import { useContext } from "react";
 import { MapContext } from "../context/mapContext";
 import ControlButton from "./ControlButton";
 
 const MapControl = () => {
-  const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { showSlope, toggleShowSlope, activeShade, toggleActiveShade } =
     useContext(MapContext);
   return (
