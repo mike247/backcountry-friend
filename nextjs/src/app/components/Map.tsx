@@ -9,10 +9,10 @@ import LocateMe from "./LocateMe";
 
 const Map = () => {
   const { showSlope, activeShade } = useContext(MapContext);
-  // if (typeof window === "undefined") return <></>;
-  const coreTiles = coreMaps.map((layer) => (
-    <TileLayer key={layer.title} url={layer.url} {...layer.meta} />
-  ));
+  const coreTiles = coreMaps.map((layer) => {
+    console.log(layer.url);
+    return <TileLayer key={layer.title} url={layer.url} {...layer.meta} />;
+  });
 
   const slopeTiles = slopeLayers.layers.map((layer) => (
     <TileLayer key={layer.title} url={layer.url} {...layer.meta} />
