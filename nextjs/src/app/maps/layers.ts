@@ -59,7 +59,7 @@ export const slopeLayers = {
   layers: [
     {
       title: "Slope layer 13",
-      url: maptilerUrlBuilder("/0196d69e-1b6d-7600-bbe7-3a77b6700c22"),
+      url: maptilerUrlBuilder("0196d69e-1b6d-7600-bbe7-3a77b6700c22"),
       meta: {
         minZoom: 13,
         maxZoom: mapMeta.maxZoom,
