@@ -5,7 +5,7 @@ import SearchBox from "./SearchBox";
 const NavBar = () => {
   return (
     <nav className="bg-slate-900">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+      <div className="mx-auto pl-8 pr-2">
         <div className="relative flex h-12 items-center justify-between">
           <div className="flex items-center justify-center sm:items-stretch sm:justify-start">
             <div className="hidden sm:block">
@@ -18,9 +18,6 @@ const NavBar = () => {
             </div>
           </div>
           <SearchBox />
-          <div>
-            <span>Login - coming soon</span>
-          </div>
         </div>
       </div>
 

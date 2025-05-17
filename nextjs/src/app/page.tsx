@@ -1,6 +1,7 @@
 "use client";
 import NavBar from "./components/NavBar";
 import MapControl from "./components/MapControl.tsx";
+import MapLegend from "./components/MapLegend.tsx";
 import dynamic from "next/dynamic";
 import { MapProvider } from "./context/mapContext.tsx";
 
@@ -17,6 +18,7 @@ export default function Home() {
         <div className="flex-grow">
           <DynamicMap />
           <MapControl />
+          <MapLegend />
         </div>
       </div>
     </MapProvider>

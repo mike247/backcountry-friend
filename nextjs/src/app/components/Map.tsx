@@ -5,6 +5,7 @@ import { MapContext } from "../context/mapContext";
 
 import "leaflet/dist/leaflet.css";
 import { useContext } from "react";
+import LocateMe from "./LocateMe";
 
 const Map = () => {
   const { showSlope, activeShade } = useContext(MapContext);
@@ -12,10 +13,11 @@ const Map = () => {
   const coreTiles = coreMaps.map((layer) => (
     <TileLayer key={layer.title} url={layer.url} {...layer.meta} />
   ));
-  const slopeTiles = slopeLayers.map((layer) => (
+
+  const slopeTiles = slopeLayers.layers.map((layer) => (
     <TileLayer key={layer.title} url={layer.url} {...layer.meta} />
   ));
-  const shadeTiles = shadeLayers.map((layer) => (
+  const shadeTiles = shadeLayers.layers.map((layer) => (
     <TileLayer key={layer.title} url={layer.url} {...layer.meta} />
   ));
 
@@ -25,6 +27,7 @@ const Map = () => {
         {coreTiles}
         {showSlope && slopeTiles}
         {shadeTiles[activeShade]}
+        <LocateMe />
       </MapContainer>
     </div>
   );
