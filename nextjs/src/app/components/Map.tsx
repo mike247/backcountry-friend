@@ -1,5 +1,5 @@
 "use client";
-import { MapContainer, TileLayer, LayersControl } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 import { coreMaps, mapMeta, slopeLayers, shadeLayers } from "../maps/layers";
 import { MapContext } from "../context/mapContext";
 
