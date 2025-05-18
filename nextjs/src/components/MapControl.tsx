@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import ControlButton from "./ControlButton";
 import { useMapContext } from "../reducers/mapReducer";
 
-const MapControl = ({ experimental }: { experimental: boolean }) => {
+const MapControl = ({ experimental }: { experimental?: boolean }) => {
   const { map, dispatch } = useMapContext();
 
   const controlGroups = Object.entries(map.dataLayers).map(
