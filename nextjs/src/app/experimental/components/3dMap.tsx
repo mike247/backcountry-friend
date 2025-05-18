@@ -111,7 +111,11 @@ const MapComponent = () => {
       }}
       views={
         new MapView({
-          controller: { doubleClickZoom: true, inertia: true },
+          controller: {
+            doubleClickZoom: true,
+            inertia: true,
+            touchRotate: true,
+          },
         })
       }
       layers={map.threeDimensions ? layers3d : layers2d}
