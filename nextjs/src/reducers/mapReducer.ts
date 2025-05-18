@@ -17,7 +17,7 @@ const mapMeta = {
 const TOPO_250 = "50798";
 const TOPO_50 = "50767";
 
-const linzUrlBuilder = (layerId: string) => {
+export const linzUrlBuilder = (layerId: string) => {
   return `/api/maps/topo?s={s}&x={x}&y={y}&z={z}&layerId=${layerId}`;
 };
 
@@ -25,37 +25,49 @@ const maptilerUrlBuilder = (layerId: string) => {
   return `/api/maps/data?x={x}&y={y}&z={z}&layerId=${layerId}`;
 };
 
-type BaseLayer = {
-  title: string;
-  url: string;
-  meta: {
-    minZoom: number;
-    maxZoom: number;
-    crossOrigin: boolean;
-    attribution: string;
-  };
-}[];
-
-const baseMap: BaseLayer = [
+const baseMap: Layer[] = [
   {
     title: "Topo 250",
     url: linzUrlBuilder(TOPO_250),
+    active: true,
     meta: {
       ...baseMapMeta,
       minZoom: mapMeta.minZoom,
       maxZoom: 11,
+      opacity: 1,
     },
   },
   {
     title: "Topo 50",
+    active: true,
     url: linzUrlBuilder(TOPO_50),
     meta: {
       ...baseMapMeta,
-      minZoom: 12,
+      minZoom: 11,
       maxZoom: mapMeta.maxZoom,
+      opacity: 1,
     },
   },
 ];
+
+export type Layer = {
+  title: string;
+  legend?: {
+    icon: string;
+    alt: string;
+    title: string;
+    label: string;
+  };
+  active: boolean;
+  url: string;
+  meta: {
+    minZoom: number;
+    maxZoom: number;
+    maxNativeZoom?: number;
+    minNativeZoom?: number;
+    opacity?: number;
+  };
+};
 
 type DataLayer = {
   legend: {
@@ -68,24 +80,7 @@ type DataLayer = {
     midText: string;
     maxText: string;
   };
-  layers: {
-    title: string;
-    legend: {
-      icon: string;
-      alt: string;
-      title: string;
-      label: string;
-    };
-    active: boolean;
-    url: string;
-    meta: {
-      minZoom: number;
-      maxZoom: number;
-      maxNativeZoom: number;
-      minNativeZoom: number;
-      opacity: number;
-    };
-  }[];
+  layers: Layer[];
 };
 
 const slopeLayers: DataLayer = {
@@ -111,11 +106,9 @@ const slopeLayers: DataLayer = {
       active: false,
       url: maptilerUrlBuilder(process.env.NEXT_PUBLIC_SLOPE_TILE_ID || ""),
       meta: {
-        minZoom: mapMeta.minZoom,
-        maxZoom: mapMeta.maxZoom,
-        maxNativeZoom: 13,
-        minNativeZoom: 6,
-        opacity: 0.5,
+        minZoom: 6,
+        maxZoom: 13,
+        opacity: 0.1,
       },
     },
   ],
@@ -144,11 +137,9 @@ const shadeLayers: DataLayer = {
       active: false,
       url: maptilerUrlBuilder(process.env.NEXT_PUBLIC_SHADE_9AM_TILE_ID || ""),
       meta: {
-        minZoom: mapMeta.minZoom,
-        maxZoom: mapMeta.maxZoom,
-        maxNativeZoom: 10,
-        minNativeZoom: 10,
-        opacity: 0.5,
+        maxZoom: 10,
+        minZoom: 10,
+        opacity: 0.1,
       },
     },
     {
@@ -162,11 +153,9 @@ const shadeLayers: DataLayer = {
       active: false,
       url: maptilerUrlBuilder(process.env.NEXT_PUBLIC_SHADE_NOON_TILE_ID || ""),
       meta: {
-        minZoom: mapMeta.minZoom,
-        maxZoom: mapMeta.maxZoom,
-        maxNativeZoom: 10,
-        minNativeZoom: 10,
-        opacity: 0.5,
+        maxZoom: 10,
+        minZoom: 10,
+        opacity: 0.1,
       },
     },
     {
@@ -180,11 +169,9 @@ const shadeLayers: DataLayer = {
       active: false,
       url: maptilerUrlBuilder(process.env.NEXT_PUBLIC_SHADE_3PM_TILE_ID || ""),
       meta: {
-        minZoom: mapMeta.minZoom,
-        maxZoom: mapMeta.maxZoom,
-        maxNativeZoom: 11,
-        minNativeZoom: 11,
-        opacity: 0.5,
+        maxZoom: 11,
+        minZoom: 11,
+        opacity: 0.1,
       },
     },
   ],
@@ -201,7 +188,7 @@ type MapConfig = {
     center: LatLngTuple | null;
     zoom: number;
   };
-  baseMap: BaseLayer;
+  baseMap: Layer[];
   dataLayers: {
     slopeLayers: DataLayer;
     shadeLayers: DataLayer;
@@ -235,6 +222,12 @@ type Action =
       payload: {
         center: LatLngTuple;
       };
+    }
+  | {
+      type: "setZoom";
+      payload: {
+        zoom: number;
+      };
     };
 
 export const mapReducer = (map: MapConfig, action: Action) => {
@@ -267,6 +260,8 @@ export const mapReducer = (map: MapConfig, action: Action) => {
           zoom: map.searchResults.zoom, // Not settable at the moment
         },
       };
+    }
+    case "setZoom": {
     }
     default:
       throw new Error("unknown action type in the map reducer");
