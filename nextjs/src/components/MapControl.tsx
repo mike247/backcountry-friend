@@ -54,7 +54,7 @@ const MapControl = ({ experimental }: { experimental?: boolean }) => {
               icon={"/icons/3d.svg"}
               alt="toggle 3d"
               title="3d"
-              label="expermintal"
+              label="3d"
               variant={map.threeDimensions ? "active" : "inactive"}
               onClick={() =>
                 dispatch({
