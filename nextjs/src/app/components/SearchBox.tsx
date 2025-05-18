@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GeocodingFeature } from "@maptiler/client";
 import Image from "next/image";
 import { useMapContext } from "../reducers/mapReducer";
@@ -17,7 +17,6 @@ const SearchResults = ({
         className="my-2 bg-slate-100 rounded-md p-2 text-slate-950 flex cursor-pointer"
         onMouseDown={(e) => e.preventDefault()}
         onClick={(e) => {
-          e.preventDefault();
           e.stopPropagation();
           handleSelect(feature);
         }}
@@ -40,6 +39,7 @@ const SearchBox = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<GeocodingFeature[]>();
   const [hideResults, setHideResults] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const { dispatch } = useMapContext();
 
   useEffect(() => {
@@ -60,13 +60,12 @@ const SearchBox = () => {
 
   const handleSelect = (feature: GeocodingFeature) => {
     setHideResults(true);
+    if (inputRef.current) inputRef.current.blur();
     dispatch({
       type: "setSearchCenter",
       payload: { center: [feature.center[1], feature.center[0]] },
     });
   };
-
-  console.log(hideResults);
 
   return (
     <div
@@ -80,6 +79,7 @@ const SearchBox = () => {
           className=" w-full leading-none bg-white placeholder:text-slate-400 text-slate-700 rounded-md pl-3 pr-16 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm"
           placeholder="Location search, sort of working..."
           onChange={(e) => setSearchTerm(e.target.value)}
+          ref={inputRef}
         />
         <button
           className="absolute top-1 right-1 flex items-center rounded bg-slate-800 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
