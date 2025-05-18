@@ -4,7 +4,7 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
 
   const subdomains = ["a", "b", "c", "d"];
-  const subdomain = subdomains.includes(searchParams.get("s"))
+  const subdomain = subdomains.includes(searchParams.get("s") || "'")
     ? searchParams.get("s")
     : subdomains[Math.floor(Math.random() * subdomains.length)];
 
