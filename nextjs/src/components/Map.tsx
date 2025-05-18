@@ -20,9 +20,11 @@ const Map = () => {
       );
   }, [map.searchResults.center, map.searchResults.zoom]);
 
-  const coreTiles = map.baseMap.map((layer) => {
-    return <TileLayer key={layer.title} url={layer.url} {...layer.meta} />;
-  });
+  const coreTiles = map.baseMap
+    .filter((layer) => layer.active)
+    .map((layer) => {
+      return <TileLayer key={layer.title} url={layer.url} {...layer.meta} />;
+    });
 
   const slopeTiles = map.dataLayers.slopeLayers.layers
     .filter((layer) => layer.active)
