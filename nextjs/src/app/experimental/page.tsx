@@ -23,7 +23,7 @@ export default function Home() {
         <NavBar titleOverride="EXPERIMENTAL" />
         <div className="flex-grow">
           <DynamicMap />
-          <MapControl />
+          <MapControl experimental={true} />
           <MapLegend />
         </div>
       </div>

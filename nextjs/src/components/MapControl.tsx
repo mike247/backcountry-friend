@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import ControlButton from "./ControlButton";
 import { useMapContext } from "../reducers/mapReducer";
 
-const MapControl = () => {
+const MapControl = ({ experimental }: { experimental: boolean }) => {
   const { map, dispatch } = useMapContext();
 
   const controlGroups = Object.entries(map.dataLayers).map(
@@ -48,22 +48,27 @@ const MapControl = () => {
       <div
         className={`w-screen sm:w-auto control-layer flex cursor-pointer relative transition-all duration-200 bg-slate-900/75 px-1 pt-2 pb-2 sm:rounded-lg text-white`}
       >
-        <ControlButton
-          icon={"/icons/3d.svg"}
-          alt="toggle 3d"
-          title="3d"
-          label="expermintal"
-          variant={map.threeDimensions ? "active" : "inactive"}
-          onClick={() =>
-            dispatch({
-              type: "toggle3dMode",
-              payload: {
-                value: !map.threeDimensions,
-              },
-            })
-          }
-        />
-        <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
+        {experimental && (
+          <>
+            <ControlButton
+              icon={"/icons/3d.svg"}
+              alt="toggle 3d"
+              title="3d"
+              label="expermintal"
+              variant={map.threeDimensions ? "active" : "inactive"}
+              onClick={() =>
+                dispatch({
+                  type: "toggle3dMode",
+                  payload: {
+                    value: !map.threeDimensions,
+                  },
+                })
+              }
+            />
+            <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
+          </>
+        )}
+
         <ControlButton
           icon={"/icons/satellite.svg"}
           alt="turn on satellite imagery"
