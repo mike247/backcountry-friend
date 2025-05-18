@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     "layerId"
   )}/${searchParams.get("z")}/${searchParams.get("x")}/${searchParams.get(
     "y"
-  )}.png?key=${process.env.MAPTILER_API_KEY}`;
+  )}.${searchParams.get("format")}?key=${process.env.MAPTILER_API_KEY}`;
 
   const response = await fetch(url);
   return response;

@@ -1,3 +1,4 @@
+import { MapViewState } from "deck.gl";
 import { LatLngTuple } from "leaflet";
 import { ActionDispatch, createContext, useContext } from "react";
 
@@ -16,13 +17,14 @@ const mapMeta = {
 
 const TOPO_250 = "50798";
 const TOPO_50 = "50767";
+// const DEM = "51768";
 
 export const linzUrlBuilder = (layerId: string) => {
   return `/api/maps/topo?s={s}&x={x}&y={y}&z={z}&layerId=${layerId}`;
 };
 
-const maptilerUrlBuilder = (layerId: string) => {
-  return `/api/maps/data?x={x}&y={y}&z={z}&layerId=${layerId}`;
+export const maptilerUrlBuilder = (layerId: string, format: string) => {
+  return `/api/maps/data?x={x}&y={y}&z={z}&layerId=${layerId}&format=${format}`;
 };
 
 const baseMap: Layer[] = [
@@ -48,11 +50,21 @@ const baseMap: Layer[] = [
       opacity: 1,
     },
   },
+  {
+    title: "Satellite",
+    active: false,
+    url: maptilerUrlBuilder("satellite-v2", "jpg"),
+    meta: {
+      minZoom: 0,
+      maxZoom: 22,
+      opacity: 1,
+    },
+  },
 ];
 
 export type Layer = {
   title: string;
-  legend?: {
+  control?: {
     icon: string;
     alt: string;
     title: string;
@@ -97,18 +109,23 @@ const slopeLayers: DataLayer = {
   layers: [
     {
       title: "Slope layer",
-      legend: {
+      control: {
         icon: "/icons/avalanche.svg",
         alt: "show slope layer",
         title: "Slope Hazards",
         label: "Slope",
       },
       active: false,
-      url: maptilerUrlBuilder(process.env.NEXT_PUBLIC_SLOPE_TILE_ID || ""),
+      url: maptilerUrlBuilder(
+        process.env.NEXT_PUBLIC_SLOPE_TILE_ID || "",
+        "png"
+      ),
       meta: {
-        minZoom: 6,
-        maxZoom: 13,
-        opacity: 0.1,
+        minZoom: mapMeta.minZoom,
+        maxZoom: mapMeta.maxZoom,
+        maxNativeZoom: 13,
+        minNativeZoom: 6,
+        opacity: 0.5,
       },
     },
   ],
@@ -128,50 +145,65 @@ const shadeLayers: DataLayer = {
   layers: [
     {
       title: "Shade @ 9am",
-      legend: {
+      control: {
         icon: "/icons/morning.svg",
         alt: "toggle morning sun and shade layer",
         title: "Morning sun",
         label: "AM",
       },
       active: false,
-      url: maptilerUrlBuilder(process.env.NEXT_PUBLIC_SHADE_9AM_TILE_ID || ""),
+      url: maptilerUrlBuilder(
+        process.env.NEXT_PUBLIC_SHADE_9AM_TILE_ID || "",
+        "png"
+      ),
       meta: {
-        maxZoom: 10,
-        minZoom: 10,
-        opacity: 0.1,
+        minZoom: mapMeta.minZoom,
+        maxZoom: mapMeta.maxZoom,
+        maxNativeZoom: 10,
+        minNativeZoom: 10,
+        opacity: 0.5,
       },
     },
     {
       title: "Shade @ noon",
-      legend: {
+      control: {
         icon: "/icons/midday.svg",
         alt: "toggle midday sun and shade layer",
         title: "Midday sun",
         label: "Noon",
       },
       active: false,
-      url: maptilerUrlBuilder(process.env.NEXT_PUBLIC_SHADE_NOON_TILE_ID || ""),
+      url: maptilerUrlBuilder(
+        process.env.NEXT_PUBLIC_SHADE_NOON_TILE_ID || "",
+        "png"
+      ),
       meta: {
-        maxZoom: 10,
-        minZoom: 10,
-        opacity: 0.1,
+        minZoom: mapMeta.minZoom,
+        maxZoom: mapMeta.maxZoom,
+        maxNativeZoom: 10,
+        minNativeZoom: 10,
+        opacity: 0.5,
       },
     },
     {
       title: "Shade @ 3pm",
-      legend: {
+      control: {
         icon: "/icons/afternoon.svg",
         alt: "toggle afternoon sun and shade layer",
         title: "Afternoon sun",
         label: "PM",
       },
       active: false,
-      url: maptilerUrlBuilder(process.env.NEXT_PUBLIC_SHADE_3PM_TILE_ID || ""),
+      url: maptilerUrlBuilder(
+        process.env.NEXT_PUBLIC_SHADE_3PM_TILE_ID || "",
+        "png"
+      ),
       meta: {
-        maxZoom: 11,
-        minZoom: 11,
-        opacity: 0.1,
+        minZoom: mapMeta.minZoom,
+        maxZoom: mapMeta.maxZoom,
+        maxNativeZoom: 11,
+        minNativeZoom: 11,
+        opacity: 0.5,
       },
     },
   ],
@@ -184,6 +216,8 @@ type MapConfig = {
     maxZoom: number;
     minZoom: number;
   };
+  threeDimensions: boolean;
+  viewState: MapViewState;
   searchResults: {
     center: LatLngTuple | null;
     zoom: number;
@@ -197,6 +231,14 @@ type MapConfig = {
 
 export const initialMap: MapConfig = {
   meta: mapMeta,
+  threeDimensions: false,
+  viewState: {
+    ...mapMeta,
+    latitude: mapMeta.center[0],
+    longitude: mapMeta.center[1],
+    pitch: 0,
+    maxPitch: 80,
+  },
   searchResults: {
     center: null,
     zoom: 12,
@@ -213,7 +255,7 @@ type Action =
       type: "updateLayerActive";
       payload: {
         index: number;
-        dataLayer: "slopeLayers" | "shadeLayers";
+        dataLayer: keyof typeof initialMap.dataLayers;
         value: boolean;
       };
     }
@@ -224,9 +266,21 @@ type Action =
       };
     }
   | {
-      type: "setZoom";
+      type: "toggleSatelliteImages";
       payload: {
-        zoom: number;
+        value: boolean;
+      };
+    }
+  | {
+      type: "toggle3dMode";
+      payload: {
+        value: boolean;
+      };
+    }
+  | {
+      type: "updateViewState";
+      payload: {
+        value: MapViewState;
       };
     };
 
@@ -261,7 +315,31 @@ export const mapReducer = (map: MapConfig, action: Action) => {
         },
       };
     }
-    case "setZoom": {
+    case "toggleSatelliteImages": {
+      return {
+        ...map,
+        baseMap: map.baseMap.map((layer) => {
+          layer.active = !action.payload.value;
+          if (layer.title === "Satellite") layer.active = action.payload.value;
+          return layer;
+        }),
+      };
+    }
+    case "toggle3dMode": {
+      return {
+        ...map,
+        threeDimensions: action.payload.value,
+        viewState: {
+          ...map.viewState,
+          pitch: action.payload.value ? 60 : 0,
+        },
+      };
+    }
+    case "updateViewState": {
+      return {
+        ...map,
+        viewState: action.payload.value,
+      };
     }
     default:
       throw new Error("unknown action type in the map reducer");

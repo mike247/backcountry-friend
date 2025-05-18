@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@maptiler/client": "^2.3.2",
+    "@types/react-map-gl": "^6.1.7",
     "cesium": "^1.129.0",
     "deck.gl": "^9.1.12",
     "leaflet": "^1.9.4",

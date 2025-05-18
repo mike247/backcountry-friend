@@ -1,15 +1,27 @@
 import * as React from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { Layer as LayerType, useMapContext } from "@/reducers/mapReducer";
-import { DeckGL, BitmapLayer, TileLayer, MapViewState } from "deck.gl";
+import {
+  Layer as LayerType,
+  maptilerUrlBuilder,
+  useMapContext,
+} from "@/reducers/mapReducer";
+import {
+  DeckGL,
+  BitmapLayer,
+  TileLayer,
+  MapViewState,
+  TerrainLayer,
+  MapView,
+} from "deck.gl";
 
 const createTileLayer = (layer: LayerType) => {
   return new TileLayer({
     id: layer.title,
     data: layer.url,
-    maxZoom: layer.meta.maxZoom,
-    minZoom: layer.meta.minZoom,
-    opacity: layer.meta.opacity,
+    maxZoom: layer.meta.maxNativeZoom || layer.meta.maxZoom,
+    minZoom: layer.meta.minNativeZoom || layer.meta.minZoom,
+    opacity: layer.meta.opacity === 1 ? 1 : 0.2,
+    pickable: true,
     renderSubLayers: (props) => {
       const { boundingBox } = props.tile;
 
@@ -24,15 +36,58 @@ const createTileLayer = (layer: LayerType) => {
         ],
       });
     },
-    pickable: false, // ???
+  });
+};
+
+const ELEVATION_DECODER = {
+  rScaler: 6553.6,
+  gScaler: 25.6,
+  bScaler: 0.1,
+  offset: -10000,
+};
+
+const createTerrainLayer = (layer: LayerType) => {
+  return new TerrainLayer({
+    id: layer.title,
+    minZoom: layer.meta.minNativeZoom || layer.meta.minZoom,
+    maxZoom: layer.meta.maxNativeZoom || layer.meta.maxZoom,
+    elevationDecoder: ELEVATION_DECODER,
+    elevationData: maptilerUrlBuilder("terrain-rgb-v2", "webp"),
+    texture: layer.url,
+    wireframe: false,
+    opacity: layer.meta.opacity === 1 ? 1 : 0.2,
+    pickable: true,
+    color: [255, 255, 255],
   });
 };
 
 const MapComponent = () => {
-  const { map } = useMapContext();
-  const [zoom, setZoom] = React.useState(map.meta.zoom);
+  const { map, dispatch } = useMapContext();
+
+  const core3dTiles = map.baseMap
+    .filter(
+      (layer) =>
+        layer.active &&
+        layer.meta.maxZoom >= map.viewState.zoom &&
+        layer.meta.minZoom < map.viewState.zoom
+    ) // TODO move to disopatch?
+    .map((layer) => createTerrainLayer(layer));
+
+  const slope3dTiles = map.dataLayers.slopeLayers.layers
+    .filter((layer) => layer.active)
+    .map((layer) => createTerrainLayer(layer));
+
+  const shade3dTiles = map.dataLayers.shadeLayers.layers
+    .filter((layer) => layer.active)
+    .map((layer) => createTerrainLayer(layer));
+
   const coreTiles = map.baseMap
-    .filter((layer) => layer.meta.maxZoom >= zoom && layer.meta.minZoom < zoom) // TODO move to disopatch?
+    .filter(
+      (layer) =>
+        layer.active &&
+        layer.meta.maxZoom >= map.viewState.zoom &&
+        layer.meta.minZoom < map.viewState.zoom
+    ) // TODO move to disopatch?
     .map((layer) => createTileLayer(layer));
 
   const slopeTiles = map.dataLayers.slopeLayers.layers
@@ -43,21 +98,23 @@ const MapComponent = () => {
     .filter((layer) => layer.active)
     .map((layer) => createTileLayer(layer));
 
-  const layers = [coreTiles, slopeTiles, shadeTiles];
+  const layers3d = [core3dTiles, slope3dTiles, shade3dTiles];
+  const layers2d = [coreTiles, slopeTiles, shadeTiles];
   return (
     <DeckGL
-      initialViewState={{
-        latitude: map.meta.center[0],
-        longitude: map.meta.center[1],
-        zoom: map.meta.zoom,
-        maxZoom: map.meta.maxZoom,
-        minZoom: map.meta.minZoom,
-      }}
+      viewState={map.viewState}
       onViewStateChange={({ viewState }) => {
-        setZoom((viewState as MapViewState).zoom);
+        dispatch({
+          type: "updateViewState",
+          payload: { value: viewState as MapViewState },
+        });
       }}
-      controller
-      layers={layers}
+      views={
+        new MapView({
+          controller: { doubleClickZoom: true, inertia: true },
+        })
+      }
+      layers={map.threeDimensions ? layers3d : layers2d}
     ></DeckGL>
   );
 };
