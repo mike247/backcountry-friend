@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { GeocodingFeature } from "@maptiler/client";
 import Image from "next/image";
-import { MapContext } from "../context/mapContext";
+import { useMapContext } from "../reducers/mapReducer";
 
 const SearchResults = ({
   features,
@@ -16,7 +16,11 @@ const SearchResults = ({
         key={feature.id}
         className="my-2 bg-slate-100 rounded-md p-2 text-slate-950 flex cursor-pointer"
         onMouseDown={(e) => e.preventDefault()}
-        onClick={() => handleSelect(feature)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleSelect(feature);
+        }}
       >
         <Image
           src="/icons/search_result.svg"
@@ -36,7 +40,7 @@ const SearchBox = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<GeocodingFeature[]>();
   const [hideResults, setHideResults] = useState(false);
-  const { map } = useContext(MapContext);
+  const { dispatch } = useMapContext();
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -56,8 +60,13 @@ const SearchBox = () => {
 
   const handleSelect = (feature: GeocodingFeature) => {
     setHideResults(true);
-    map.current?.setView([feature.center[1], feature.center[0]], 14);
+    dispatch({
+      type: "setSearchCenter",
+      payload: { center: [feature.center[1], feature.center[0]] },
+    });
   };
+
+  console.log(hideResults);
 
   return (
     <div

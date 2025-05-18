@@ -1,6 +1,4 @@
-import { useContext } from "react";
-import { shadeLayers, slopeLayers } from "../maps/layers";
-import { MapContext } from "../context/mapContext";
+import { useMapContext } from "../reducers/mapReducer";
 
 const Gradient = ({
   gradient,
@@ -48,26 +46,26 @@ const LegendKey = ({
 };
 
 const MapLegend = () => {
-  const { showSlope, activeShade } = useContext(MapContext);
+  const { map } = useMapContext();
+
+  const legends = Object.entries(map.dataLayers)
+    .filter(([, dataLayer]) => dataLayer.layers.some((layer) => layer.active))
+    .map(([key, dataLayer]) => {
+      return (
+        <div
+          key={key}
+          className={`flex-col sm:flex sm:flex-row justify-end bg-slate-800/75 rounded-lg overflow-hidden my-1 sm:flex`}
+        >
+          <LegendKey {...dataLayer.legend} />
+          <Gradient gradient={dataLayer.legend.gradient} />
+        </div>
+      );
+    });
+
   return (
     <div className="w-screen sm:w-auto flex bottom-[75px] sm:bottom-4 sm:right-4 absolute text-white">
       <div className="flex-grow mx-2  relative above-map flex-col sm:flex sm:items-end">
-        {activeShade >= 0 && (
-          <div
-            className={`flex-col sm:flex sm:flex-row justify-end bg-slate-800/75 rounded-lg overflow-hidden my-1 sm:flex`}
-          >
-            <LegendKey {...shadeLayers.legend} />
-            <Gradient gradient={shadeLayers.legend.gradient} />
-          </div>
-        )}
-        {showSlope && (
-          <div
-            className={`flex-col sm:flex sm:flex-row justify-end bg-slate-800/75 rounded-lg overflow-hidden my-1`}
-          >
-            <LegendKey {...slopeLayers.legend} />
-            <Gradient gradient={slopeLayers.legend.gradient} />
-          </div>
-        )}
+        {legends.reverse()}
       </div>
     </div>
   );
