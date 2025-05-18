@@ -115,6 +115,8 @@ const MapComponent = () => {
             doubleClickZoom: true,
             inertia: true,
             touchRotate: true,
+            dragMode: "rotate",
+            dragRotate: true,
           },
         })
       }
