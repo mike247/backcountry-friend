@@ -201,8 +201,8 @@ const shadeLayers: DataLayer = {
       meta: {
         minZoom: mapMeta.minZoom,
         maxZoom: mapMeta.maxZoom,
-        maxNativeZoom: 10,
-        minNativeZoom: 10,
+        maxNativeZoom: 13,
+        minNativeZoom: 6,
         opacity: 0.5,
       },
     },
@@ -223,8 +223,8 @@ const shadeLayers: DataLayer = {
       meta: {
         minZoom: mapMeta.minZoom,
         maxZoom: mapMeta.maxZoom,
-        maxNativeZoom: 11,
-        minNativeZoom: 11,
+        maxNativeZoom: 13,
+        minNativeZoom: 6,
         opacity: 0.5,
       },
     },

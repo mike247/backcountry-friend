@@ -23,24 +23,31 @@ const Map = () => {
   const coreTiles = map.baseMap
     .filter((layer) => layer.active)
     .map((layer) => {
-      return <TileLayer key={layer.title} url={layer.url} {...layer.meta} />;
+      return (
+        <TileLayer
+          key={layer.title}
+          url={layer.url}
+          {...layer.meta}
+          zIndex={0}
+        />
+      );
     });
 
   const satelliteTiles = map.dataLayers.satelliteLayers.layers
     .filter((layer) => layer.active)
     .map((layer) => (
-      <TileLayer key={layer.title} url={layer.url} {...layer.meta} />
+      <TileLayer key={layer.title} url={layer.url} {...layer.meta} zIndex={1} />
     ));
 
   const slopeTiles = map.dataLayers.slopeLayers.layers
     .filter((layer) => layer.active)
     .map((layer) => (
-      <TileLayer key={layer.title} url={layer.url} {...layer.meta} />
+      <TileLayer key={layer.title} url={layer.url} {...layer.meta} zIndex={2} />
     ));
   const shadeTiles = map.dataLayers.shadeLayers.layers
     .filter((layer) => layer.active)
     .map((layer) => (
-      <TileLayer key={layer.title} url={layer.url} {...layer.meta} />
+      <TileLayer key={layer.title} url={layer.url} {...layer.meta} zIndex={2} />
     ));
 
   return (
