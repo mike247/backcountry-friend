@@ -43,7 +43,7 @@ const MapComponent = () => {
       doubleClickZoom: true,
       inertia: true,
       touchRotate: true,
-      dragMode: "pan",
+      dragMode: "rotate",
       dragRotate: true,
     },
   });
