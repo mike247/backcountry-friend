@@ -1,4 +1,3 @@
-import { MapViewState } from "deck.gl";
 import { LatLngTuple } from "leaflet";
 import { ActionDispatch, createContext, useContext } from "react";
 
@@ -13,6 +12,10 @@ const mapMeta = {
   zoom: 8,
   maxZoom: 16,
   minZoom: 6,
+  latitude: -44.6943,
+  longitude: 169.1417,
+  pitch: 0,
+  maxPitch: 80,
 };
 
 const TOPO_250 = "50798";
@@ -29,34 +32,26 @@ export const maptilerUrlBuilder = (layerId: string, format: string) => {
 
 const baseMap: Layer[] = [
   {
-    title: "Topo 250",
+    id: "250",
+    title: "Topo250",
     url: linzUrlBuilder(TOPO_250),
     active: true,
     meta: {
       ...baseMapMeta,
       minZoom: mapMeta.minZoom,
-      maxZoom: 11,
+      maxZoom: 13,
       opacity: 1,
     },
   },
   {
-    title: "Topo 50",
+    id: "50",
+    title: "Topo50",
     active: true,
     url: linzUrlBuilder(TOPO_50),
     meta: {
       ...baseMapMeta,
-      minZoom: 11,
+      minZoom: 12,
       maxZoom: mapMeta.maxZoom,
-      opacity: 1,
-    },
-  },
-  {
-    title: "Satellite",
-    active: false,
-    url: maptilerUrlBuilder("satellite-v2", "jpg"),
-    meta: {
-      minZoom: 0,
-      maxZoom: 22,
       opacity: 1,
     },
   },
@@ -64,6 +59,7 @@ const baseMap: Layer[] = [
 
 export type Layer = {
   title: string;
+  id: string;
   control?: {
     icon: string;
     alt: string;
@@ -82,7 +78,7 @@ export type Layer = {
 };
 
 type DataLayer = {
-  legend: {
+  legend?: {
     gradient: {
       min: string;
       mid: string;
@@ -93,6 +89,28 @@ type DataLayer = {
     maxText: string;
   };
   layers: Layer[];
+};
+
+const satelliteLayers: DataLayer = {
+  layers: [
+    {
+      id: "sat",
+      title: "Satellite",
+      active: false,
+      url: maptilerUrlBuilder("satellite-v2", "jpg"),
+      control: {
+        icon: "/icons/satellite.svg",
+        alt: "toggle satellite images",
+        title: "Satellite images",
+        label: "sat",
+      },
+      meta: {
+        minZoom: 0,
+        maxZoom: 22,
+        opacity: 1,
+      },
+    },
+  ],
 };
 
 const slopeLayers: DataLayer = {
@@ -108,6 +126,7 @@ const slopeLayers: DataLayer = {
   },
   layers: [
     {
+      id: "slope",
       title: "Slope layer",
       control: {
         icon: "/icons/avalanche.svg",
@@ -144,6 +163,7 @@ const shadeLayers: DataLayer = {
   },
   layers: [
     {
+      id: "9am",
       title: "Shade @ 9am",
       control: {
         icon: "/icons/morning.svg",
@@ -165,6 +185,7 @@ const shadeLayers: DataLayer = {
       },
     },
     {
+      id: "noon",
       title: "Shade @ noon",
       control: {
         icon: "/icons/midday.svg",
@@ -186,6 +207,7 @@ const shadeLayers: DataLayer = {
       },
     },
     {
+      id: "3pm",
       title: "Shade @ 3pm",
       control: {
         icon: "/icons/afternoon.svg",
@@ -209,21 +231,39 @@ const shadeLayers: DataLayer = {
   ],
 };
 
-type MapConfig = {
+export type MapConfig = {
   meta: {
     center: LatLngTuple;
     zoom: number;
     maxZoom: number;
     minZoom: number;
+    latitude: number;
+    longitude: number;
+    pitch: number;
+    maxPitch: number;
   };
-  threeDimensions: boolean;
-  viewState: MapViewState;
+  effectsState: {
+    threeDimensions: boolean;
+    sun: {
+      active: boolean;
+      id?: string;
+      _shadow?: boolean;
+      intensity?: number;
+      color?: [number, number, number];
+      timestamp: number;
+    };
+  };
+  activeLayers: Layer[];
+  viewState: {
+    maxPitch: number;
+  };
   searchResults: {
     center: LatLngTuple | null;
     zoom: number;
   };
   baseMap: Layer[];
   dataLayers: {
+    satelliteLayers: DataLayer;
     slopeLayers: DataLayer;
     shadeLayers: DataLayer;
   };
@@ -231,13 +271,18 @@ type MapConfig = {
 
 export const initialMap: MapConfig = {
   meta: mapMeta,
-  threeDimensions: false,
   viewState: {
-    ...mapMeta,
-    latitude: mapMeta.center[0],
-    longitude: mapMeta.center[1],
-    pitch: 0,
     maxPitch: 80,
+  },
+  activeLayers: [],
+  effectsState: {
+    threeDimensions: false,
+    sun: {
+      active: false,
+      intensity: 3,
+      color: [255, 255, 255],
+      timestamp: Date.now(),
+    },
   },
   searchResults: {
     center: null,
@@ -245,6 +290,7 @@ export const initialMap: MapConfig = {
   },
   baseMap,
   dataLayers: {
+    satelliteLayers,
     slopeLayers,
     shadeLayers,
   },
@@ -254,9 +300,9 @@ type Action =
   | {
       type: "updateLayerActive";
       payload: {
-        index: number;
+        id: string;
         dataLayer: keyof typeof initialMap.dataLayers;
-        value: boolean;
+        active: boolean;
       };
     }
   | {
@@ -266,44 +312,53 @@ type Action =
       };
     }
   | {
-      type: "toggleSatelliteImages";
-      payload: {
-        value: boolean;
-      };
-    }
-  | {
       type: "toggle3dMode";
       payload: {
         value: boolean;
       };
     }
   | {
-      type: "updateViewState";
+      type: "updateTimestamp";
       payload: {
-        value: MapViewState;
+        value: number;
       };
     };
 
 export const mapReducer = (map: MapConfig, action: Action) => {
   switch (action.type) {
     case "updateLayerActive":
-      const { dataLayer, index, value } = action.payload;
-      // map.dataLayers[dataLayer].layers[index].active = !currentState;
+      const { dataLayer, id, active } = action.payload;
+      const dataLayers = {
+        ...map.dataLayers,
+        [dataLayer]: {
+          ...map.dataLayers[dataLayer],
+          layers: map.dataLayers[dataLayer].layers.map((layer) => {
+            layer.active = false;
+            if (id === layer.id) {
+              layer.active = active;
+            }
+            return layer;
+          }),
+        },
+      };
+
+      // Eco - remove layers not actively looked at
+      const activeLayers = Object.entries(map.dataLayers).reduce<Layer[]>(
+        (al, [, dataLayer]) => {
+          return al.concat(dataLayer.layers.filter((layer) => layer.active));
+        },
+        []
+      );
+
+      // Hybrid - keep layers not actively looked at but selected running
+      // const activeLayers = map.activeLayers.concat(
+      //   map.dataLayers[dataLayer].layers.filter((layer) => layer.id === id)
+      // );
+
       return {
         ...map,
-        dataLayers: {
-          ...map.dataLayers,
-          [dataLayer]: {
-            ...map.dataLayers[dataLayer],
-            layers: map.dataLayers[dataLayer].layers.map((layer, i) => {
-              layer.active = false;
-              if (i === index) {
-                layer.active = value;
-              }
-              return layer;
-            }),
-          },
-        },
+        activeLayers,
+        dataLayers,
       };
     case "setSearchCenter": {
       const { center } = action.payload;
@@ -315,30 +370,25 @@ export const mapReducer = (map: MapConfig, action: Action) => {
         },
       };
     }
-    case "toggleSatelliteImages": {
-      return {
-        ...map,
-        baseMap: map.baseMap.map((layer) => {
-          layer.active = !action.payload.value;
-          if (layer.title === "Satellite") layer.active = action.payload.value;
-          return layer;
-        }),
-      };
-    }
     case "toggle3dMode": {
       return {
         ...map,
-        threeDimensions: action.payload.value,
-        viewState: {
-          ...map.viewState,
-          pitch: action.payload.value ? 60 : 0,
+        effectsState: {
+          ...map.effectsState,
+          threeDimensions: action.payload.value,
         },
       };
     }
-    case "updateViewState": {
+    case "updateTimestamp": {
       return {
         ...map,
-        viewState: action.payload.value,
+        effectsState: {
+          ...map.effectsState,
+          sun: {
+            ...map.effectsState.sun,
+            timestamp: action.payload.value,
+          },
+        },
       };
     }
     default:

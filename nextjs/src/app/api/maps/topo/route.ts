@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
     "z"
   )}/${searchParams.get("x")}/${searchParams.get("y")}.png`;
 
-  console.log(subdomain);
   const response = await fetch(url);
   return response;
 }

@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { useMapContext } from "../reducers/mapReducer";
 
 const Gradient = ({
@@ -48,22 +49,31 @@ const LegendKey = ({
 const MapLegend = () => {
   const { map } = useMapContext();
 
-  const legends = Object.entries(map.dataLayers)
-    .filter(([, dataLayer]) => dataLayer.layers.some((layer) => layer.active))
-    .map(([key, dataLayer]) => {
-      return (
-        <div
-          key={key}
-          className={`flex-col sm:flex sm:flex-row justify-end bg-slate-800/75 rounded-lg overflow-hidden my-1 sm:flex`}
-        >
-          <LegendKey {...dataLayer.legend} />
-          <Gradient gradient={dataLayer.legend.gradient} />
-        </div>
-      );
-    });
+  const legends = Object.entries(map.dataLayers).reduce<JSX.Element[]>(
+    (acc, [key, dataLayer]) => {
+      if (dataLayer.legend && dataLayer.layers.some((layer) => layer.active)) {
+        return acc.concat(
+          <div
+            key={key}
+            className={`flex-col sm:flex sm:flex-row justify-end bg-slate-800/75 rounded-lg overflow-hidden my-1 sm:flex`}
+          >
+            <LegendKey {...dataLayer.legend!} />
+            <Gradient gradient={dataLayer.legend!.gradient} />
+          </div>
+        );
+      }
+      return acc;
+    },
+    []
+  );
 
+  // TODO hacky but easy
   return (
-    <div className="w-screen sm:w-auto flex bottom-[75px] sm:bottom-4 sm:right-4 absolute text-white">
+    <div
+      className={`${
+        map.effectsState.threeDimensions ? "bottom-[144px]" : "bottom-[75px]"
+      } w-screen sm:w-auto flex sm:bottom-4 sm:right-4 absolute text-white`}
+    >
       <div className="flex-grow mx-2  relative above-map flex-col sm:flex sm:items-end">
         {legends.reverse()}
       </div>

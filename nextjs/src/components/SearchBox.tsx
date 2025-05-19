@@ -101,7 +101,7 @@ const SearchBox = () => {
         </button>
       </div>
       {searchResults && !hideResults && (
-        <div className="absolute z-[10001] top-12 bg-slate-800 px-2 rounded-md">
+        <div className="absolute z-[10002] top-12 bg-slate-800 px-2 rounded-md">
           <SearchResults features={searchResults} handleSelect={handleSelect} />
         </div>
       )}

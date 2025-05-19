@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { Fragment } from "react";
 import ControlButton from "./ControlButton";
 import { useMapContext } from "../reducers/mapReducer";
+import TimeSlider from "./TimeSlider";
 
 const MapControl = ({ experimental }: { experimental?: boolean }) => {
   const { map, dispatch } = useMapContext();
@@ -10,7 +10,7 @@ const MapControl = ({ experimental }: { experimental?: boolean }) => {
     ([key, dataLayer], index) => {
       const controls = dataLayer.layers
         .filter((layer) => layer.control)
-        .map((layer, index) => {
+        .map((layer) => {
           return (
             // TODO Should be { layer.control && ....}
             <ControlButton
@@ -24,9 +24,9 @@ const MapControl = ({ experimental }: { experimental?: boolean }) => {
                 dispatch({
                   type: "updateLayerActive",
                   payload: {
-                    index,
+                    id: layer.id,
                     dataLayer: key as keyof typeof map.dataLayers,
-                    value: !layer.active,
+                    active: !layer.active,
                   },
                 })
               }
@@ -44,7 +44,7 @@ const MapControl = ({ experimental }: { experimental?: boolean }) => {
     }
   );
   return (
-    <div className="fixed bottom-0 sm:bottom-auto sm:top-12 sm:right-0 sm:absolute above-map sm:m-2 cursor-pointer flex items-center">
+    <div className="fixed flex bottom-0 sm:bottom-auto sm:top-12 sm:right-0 sm:absolute above-map sm:m-2 cursor-pointer sm:flex-col flex-col-reverse items-center">
       <div
         className={`w-screen sm:w-auto control-layer flex cursor-pointer relative transition-all duration-200 bg-slate-900/75 px-1 pt-2 pb-2 sm:rounded-lg text-white`}
       >
@@ -55,12 +55,12 @@ const MapControl = ({ experimental }: { experimental?: boolean }) => {
               alt="toggle 3d"
               title="3d"
               label="3d"
-              variant={map.threeDimensions ? "active" : "inactive"}
+              variant={map.effectsState.threeDimensions ? "active" : "inactive"}
               onClick={() =>
                 dispatch({
                   type: "toggle3dMode",
                   payload: {
-                    value: !map.threeDimensions,
+                    value: !map.effectsState.threeDimensions,
                   },
                 })
               }
@@ -68,37 +68,13 @@ const MapControl = ({ experimental }: { experimental?: boolean }) => {
             <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
           </>
         )}
-
-        <ControlButton
-          icon={"/icons/satellite.svg"}
-          alt="turn on satellite imagery"
-          title="Satellite imagery"
-          label="Sat"
-          variant={
-            map.baseMap.find((layer) => layer.title === "Satellite")?.active
-              ? "active"
-              : "inactive"
-          }
-          onClick={() =>
-            dispatch({
-              type: "toggleSatelliteImages",
-              payload: {
-                value: !map.baseMap.find((layer) => layer.title === "Satellite") // TODO fix hacky location
-                  ?.active,
-              },
-            })
-          }
-        />
-        <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
         {controlGroups}
       </div>
-      <Image
-        src="/icons/layer.svg"
-        alt="Layer menu"
-        width={60}
-        height={60}
-        className={`duration-200 transition-all hidden`}
-      />
+      {map.effectsState.threeDimensions && (
+        <div className="w-full">
+          <TimeSlider />
+        </div>
+      )}
     </div>
   );
 };

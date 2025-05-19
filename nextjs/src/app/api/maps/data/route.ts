@@ -3,6 +3,8 @@ import { NextRequest } from "next/server";
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
 
+  const layerId = searchParams.get("layerId");
+
   const url = `https://api.maptiler.com/tiles/${searchParams.get(
     "layerId"
   )}/${searchParams.get("z")}/${searchParams.get("x")}/${searchParams.get(
