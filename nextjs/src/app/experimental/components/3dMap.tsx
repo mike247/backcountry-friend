@@ -1,10 +1,16 @@
 import "maplibre-gl/dist/maplibre-gl.css";
-import { Layer as LayerType, useMapContext } from "@/reducers/mapReducer";
+import {
+  Layer as LayerType,
+  ShaderLayer,
+  useMapContext,
+} from "@/reducers/mapReducer";
 import { DeckGL, MapView } from "deck.gl";
 import { createTileLayer } from "../layers/2dLayers";
 import { createTerrainLayer } from "../layers/3dLayers";
-import { generateEffects } from "../layers/effects";
+// import { generateEffects } from "../layers/effects";
 import { useMemo } from "react";
+import { shaderTilelayer } from "../layers/shaderTileLayer";
+import shaderLookup from "../shaders/shaderLookup";
 
 const generateData = (
   baseMap: LayerType[],
@@ -25,6 +31,28 @@ const generateData = (
   return allLayers;
 };
 
+const generateShaderLayers = (
+  shaderLayers: ShaderLayer[],
+  threeDimensions: boolean
+) => {
+  return shaderLayers.map((shader) => {
+    const shaderProps: { [key: string]: number } = {};
+    Object.keys(shader.sliders).forEach((key) => {
+      shaderProps[key] = shader.sliders[key].value;
+    });
+
+    return shaderTilelayer({
+      threeDimensions,
+      id: shader.id,
+      shaderProps,
+      visible: shader.active,
+      shader: shaderLookup[shader.id],
+    });
+  });
+
+  // return [SlopeTileLayer(threeDimensions)];
+};
+
 const MapComponent = () => {
   const { map } = useMapContext();
 
@@ -32,9 +60,9 @@ const MapComponent = () => {
     controller: {
       doubleClickZoom: true,
       inertia: true,
-      touchRotate: false,
+      touchRotate: true,
       dragMode: "pan",
-      dragRotate: false,
+      dragRotate: true,
     },
   });
 
@@ -49,11 +77,13 @@ const MapComponent = () => {
   });
 
   const dataLayers = useMemo(() => {
-    return generateData(
-      map.baseMap,
-      map.activeLayers,
-      map.effectsState.threeDimensions
-    );
+    return [
+      ...generateData(
+        map.baseMap,
+        map.activeLayers,
+        map.effectsState.threeDimensions
+      ),
+    ];
   }, [map.baseMap, map.activeLayers, map.effectsState.threeDimensions]);
 
   return (
@@ -62,8 +92,14 @@ const MapComponent = () => {
       views={
         map.effectsState.threeDimensions ? threedController : twodController
       }
-      effects={generateEffects(map)}
-      layers={[...dataLayers]}
+      // effects={generateEffects(map)}
+      layers={[
+        ...dataLayers,
+        generateShaderLayers(
+          map.shaderLayers,
+          map.effectsState.threeDimensions
+        ),
+      ]}
     ></DeckGL>
   );
 };

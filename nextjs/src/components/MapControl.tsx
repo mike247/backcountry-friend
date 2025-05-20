@@ -1,7 +1,8 @@
 import { Fragment } from "react";
 import ControlButton from "./ControlButton";
 import { useMapContext } from "../reducers/mapReducer";
-import TimeSlider from "./TimeSlider";
+// import TimeSlider from "./TimeSlider";
+import Slider from "./Slider";
 
 const MapControl = ({ experimental }: { experimental?: boolean }) => {
   const { map, dispatch } = useMapContext();
@@ -66,14 +67,55 @@ const MapControl = ({ experimental }: { experimental?: boolean }) => {
               }
             />
             <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
+            {map.shaderLayers.map((layer) => {
+              return (
+                <ControlButton
+                  key={layer.control!.title}
+                  icon={layer.control!.icon}
+                  alt={layer.control!.alt}
+                  title={layer.control!.title}
+                  label={layer.control!.label}
+                  variant={layer.active ? "active" : "inactive"}
+                  onClick={() =>
+                    dispatch({
+                      type: "updateShader",
+                      payload: {
+                        id: layer.id,
+                        active: !layer.active,
+                      },
+                    })
+                  }
+                />
+              );
+            })}
+            <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
           </>
         )}
         {controlGroups}
       </div>
-      {map.effectsState.threeDimensions && (
-        <div className="w-full">
-          <TimeSlider />
-        </div>
+
+      {map.shaderLayers
+        .filter((shader) => shader.active)
+        .map((shader) => {
+          return Object.entries(shader.sliders).map(([slider, value]) => {
+            return (
+              <div className="w-full" key={slider + shader.id}>
+                <Slider
+                  shader={shader.id}
+                  slider={slider}
+                  value={value.value}
+                  legend={value.legend}
+                  min={value.min}
+                  max={value.max}
+                  title={value.title}
+                />
+              </div>
+            );
+          });
+        })}
+
+      {map.effectsState.threeDimensions && false && (
+        <div className="w-full">{/* <TimeSlider />  */}</div>
       )}
     </div>
   );

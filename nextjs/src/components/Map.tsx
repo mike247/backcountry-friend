@@ -33,6 +33,12 @@ const Map = () => {
       );
     });
 
+  const topoLayers = map.dataLayers.topoLayers.layers
+    .filter((layer) => layer.active)
+    .map((layer) => (
+      <TileLayer key={layer.title} url={layer.url} {...layer.meta} zIndex={1} />
+    ));
+
   const satelliteTiles = map.dataLayers.satelliteLayers.layers
     .filter((layer) => layer.active)
     .map((layer) => (
@@ -54,6 +60,7 @@ const Map = () => {
     <div style={{ width: "100vw", height: "100%" }}>
       <MapContainer {...map.meta} ref={mapInstance}>
         {coreTiles}
+        {topoLayers}
         {satelliteTiles}
         {slopeTiles}
         {shadeTiles}
