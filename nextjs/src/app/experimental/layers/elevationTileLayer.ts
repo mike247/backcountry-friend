@@ -13,7 +13,7 @@ interface SlopeBitmapLayerProps extends BitmapLayerProps {
 }
 
 class SlopeBitmapLayer extends BitmapLayer<SlopeBitmapLayerProps> {
-  draw(opts) {
+  draw(opts: unknown) {
     const { model } = this.state;
     if (model) {
       const elevationUniformProps: ElevationUniformProps = {

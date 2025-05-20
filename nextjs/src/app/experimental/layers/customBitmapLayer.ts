@@ -13,7 +13,7 @@ interface CustomBitmapLayerProps extends BitmapLayerProps {
 }
 
 export class CustomBitmapLayer extends BitmapLayer<CustomBitmapLayerProps> {
-  draw(opts) {
+  draw(opts: unknown) {
     const { model } = this.state;
     if (model) {
       const customUniformProps: CustomUniformProps = {
