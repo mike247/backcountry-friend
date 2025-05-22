@@ -55,11 +55,13 @@ export const shaderTilelayer = ({
         id,
         image: data,
         extensions: threeDimensions ? [new TerrainExtension()] : [],
-        pixelSize: [metersPerPixel, metersPerPixel],
-        textureSize: [tileWidth, tileHeight],
-        opacity: shaderProps.opacity,
-        cutoffElevation: shaderProps.cutoffElevation,
-        cutoffAngle: shaderProps.cutoffAngle,
+        customUniforms: {
+          pixelSize: [metersPerPixel, metersPerPixel],
+          textureSize: [tileWidth, tileHeight],
+          opacity: shaderProps.opacity,
+          cutoffElevation: shaderProps.cutoffElevation,
+          cutoffAngle: shaderProps.cutoffAngle,
+        },
         bounds: [bb[0][0], bb[0][1], bb[1][0], bb[1][1]],
         module: slopeModule,
         shader: shader(shaderProps),
@@ -67,14 +69,3 @@ export const shaderTilelayer = ({
     },
   });
 };
-
-// export const GpuSlope3d = new TerrainLayer({
-//   id: "GPU_SLOPE" + "3d",
-//   minZoom: 0,
-//   maxZoom: 14,
-//   elevationDecoder: ELEVATION_DECODER,
-//   elevationData: maptilerUrlBuilder("terrain-rgb-v2", "webp"),
-//   operation: "terrain+draw",
-//   wireframe: false,
-//   color: [255, 255, 255],
-// });

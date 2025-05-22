@@ -1,13 +1,16 @@
 import { ShaderModule } from "@luma.gl/shadertools";
-import { customUniformModule, CustomUniformProps } from "../shaders/uniform";
+import { customUniformModule, CustomUniformProps } from "../shaders/uniforms";
 import { BitmapLayer, BitmapLayerProps } from "@deck.gl/layers";
 
 interface CustomBitmapLayerProps extends BitmapLayerProps {
-  pixelSize: [number, number];
-  textureSize: [number, number];
-  opacity: number;
-  cutoffElevation: number;
-  cutoffAngle: number;
+  customUniforms: {
+    pixelSize: [number, number];
+    textureSize: [number, number];
+    opacity: number;
+    cutoffElevation: number;
+    cutoffAngle: number;
+  };
+
   module: ShaderModule;
   shader: string;
 }
@@ -17,10 +20,11 @@ export class CustomBitmapLayer extends BitmapLayer<CustomBitmapLayerProps> {
     const { model } = this.state;
     if (model) {
       const customUniformProps: CustomUniformProps = {
-        pixelSize: this.props.pixelSize,
-        opacity: this.props.opacity,
-        cutoffElevation: this.props.cutoffElevation,
-        cutoffAngle: this.props.cutoffAngle,
+        pixelSize: this.props.customUniforms.pixelSize,
+        textureSize: this.props.customUniforms.textureSize,
+        opacity: this.props.customUniforms.opacity,
+        cutoffElevation: this.props.customUniforms.cutoffElevation,
+        cutoffAngle: this.props.customUniforms.cutoffAngle,
       };
 
       model.shaderInputs.setProps({

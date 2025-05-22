@@ -3,6 +3,7 @@ import { ShaderModule, UniformTypes } from "@luma.gl/shadertools";
 const customUniform = `\
     uniform customUniforms {
      vec2 pixelSize;
+     vec2 textureSize;
      float opacity;
      float cutoffAngle;
      float cutoffElevation;
@@ -11,6 +12,7 @@ const customUniform = `\
 
 export type CustomUniformProps = {
   pixelSize: [number, number];
+  textureSize: [number, number];
   opacity: number;
   cutoffAngle: number;
   cutoffElevation: number;
@@ -22,6 +24,7 @@ export const customUniformModule = {
   fs: customUniform,
   uniformTypes: {
     pixelSize: "vec2<f32>",
+    textureSize: "vec2<f32>",
     opacity: "f32",
     cutoffAngle: "f32",
     cutoffElevation: "f32",

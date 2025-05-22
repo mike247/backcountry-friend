@@ -11,8 +11,8 @@ const shaderLookup: {
               uniform sampler2D bitmapTexture;
         
                 void main() {
-                    float dx =  1.0 / 512.0;
-                    float dy =  1.0 / 512.0;
+                    float dx =  1.0 / custom.textureSize.x;
+                    float dy =  1.0 / custom.textureSize.y;
         
                     vec3 center = texture(bitmapTexture, vTexCoord).rgb;
                     vec3 left   = texture(bitmapTexture, vTexCoord + vec2(-dx, 0.0)).rgb;
@@ -24,14 +24,7 @@ const shaderLookup: {
                     float zx = decodeElevation(right) - decodeElevation(left);
                     float zy = decodeElevation(down) - decodeElevation(up);
         
-                    const float metersPerPixel = 5.0; // adjust as needed
-        
-                    float slope = degrees(atan(sqrt(
-                    pow(zx / custom.pixelSize.x, 2.0) + 
-                    pow(zy / custom.pixelSize.y, 2.0)
-                    )));
-        
-                    
+                    float slope = calculateSlope(zx, zy, custom.pixelSize);
                     fragColor = slopeColor(slope, zc);
                 }
         
