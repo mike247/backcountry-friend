@@ -97,21 +97,23 @@ const MapControl = ({ experimental }: { experimental?: boolean }) => {
       {map.shaderLayers
         .filter((shader) => shader.active)
         .map((shader) => {
-          return Object.entries(shader.sliders).map(([slider, value]) => {
-            return (
-              <div className="w-full" key={slider + shader.id}>
-                <Slider
-                  shader={shader.id}
-                  slider={slider}
-                  value={value.value}
-                  legend={value.legend}
-                  min={value.min}
-                  max={value.max}
-                  title={value.title}
-                />
-              </div>
-            );
-          });
+          return Object.entries(shader.sliders)
+            .filter(([, value]) => !value.hidden)
+            .map(([slider, value]) => {
+              return (
+                <div className="w-full" key={slider + shader.id}>
+                  <Slider
+                    shader={shader.id}
+                    slider={slider}
+                    value={value.value}
+                    legend={value.legend}
+                    min={value.min}
+                    max={value.max}
+                    title={value.title}
+                  />
+                </div>
+              );
+            });
         })}
 
       {map.effectsState.threeDimensions && false && (

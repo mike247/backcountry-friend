@@ -85,6 +85,7 @@ export type ShaderLayer = Layer & {
       max: number;
       legend?: string[];
       title: string;
+      hidden: boolean;
     };
   };
 };
@@ -292,7 +293,7 @@ const shaderLayers: ShaderLayer[] = [
       icon: "/icons/avalanche.svg",
       alt: "toggle gpu slope layer",
       title: "Slope angle",
-      label: "Gpu Slope",
+      label: "Slope",
     },
     active: false,
     url: maptilerUrlBuilder("terrain-rgb-v2", "webp"),
@@ -303,15 +304,16 @@ const shaderLayers: ShaderLayer[] = [
     },
     sliders: {
       opacity: {
-        value: 0.5,
+        value: 0.3,
         legend: ["0", "1"],
         title: "Opacity",
         min: 0,
         max: 1,
+        hidden: true,
       },
       cutoffElevation: {
         title: "Elevation",
-        value: 200,
+        value: 1,
         min: 0,
         max: 10000,
         legend: [
@@ -327,13 +329,15 @@ const shaderLayers: ShaderLayer[] = [
           "9000",
           "10000",
         ],
+        hidden: true,
       },
       cutoffAngle: {
         title: "Min angle",
-        value: 5,
+        value: 30,
         legend: ["0", "10", "20", "30", "40", "50", "60"],
         min: 0,
         max: 60,
+        hidden: false,
       },
     },
   },
@@ -372,7 +376,7 @@ export type MapConfig = {
   dataLayers: {
     topoLayers: DataLayer;
     satelliteLayers: DataLayer;
-    slopeLayers: DataLayer;
+    // slopeLayers: DataLayer;
     shadeLayers: DataLayer;
   };
   shaderLayers: ShaderLayer[];
@@ -400,7 +404,7 @@ export const initialMap: MapConfig = {
   dataLayers: {
     topoLayers,
     satelliteLayers,
-    slopeLayers,
+    // slopeLayers,
     shadeLayers,
   },
   shaderLayers,
@@ -512,7 +516,6 @@ export const mapReducer = (map: MapConfig, action: Action) => {
       };
     }
     case "updateViewState": {
-      console.log(action.payload.viewState);
       return {
         ...map,
         viewState: action.payload.viewState,
