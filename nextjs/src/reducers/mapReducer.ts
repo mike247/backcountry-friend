@@ -512,7 +512,7 @@ export const mapReducer = (map: MapConfig, action: Action) => {
       };
     }
     case "updateViewState": {
-      console.log(action.payload.viewState.zoom);
+      console.log(action.payload.viewState);
       return {
         ...map,
         viewState: action.payload.viewState,
