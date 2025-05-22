@@ -45,11 +45,11 @@ const Map = () => {
       <TileLayer key={layer.title} url={layer.url} {...layer.meta} zIndex={1} />
     ));
 
-  const slopeTiles = map.dataLayers.slopeLayers.layers
-    .filter((layer) => layer.active)
-    .map((layer) => (
-      <TileLayer key={layer.title} url={layer.url} {...layer.meta} zIndex={2} />
-    ));
+  // const slopeTiles = map.dataLayers.slopeLayers.layers
+  //   .filter((layer) => layer.active)
+  //   .map((layer) => (
+  //     <TileLayer key={layer.title} url={layer.url} {...layer.meta} zIndex={2} />
+  //   ));
   const shadeTiles = map.dataLayers.shadeLayers.layers
     .filter((layer) => layer.active)
     .map((layer) => (
@@ -62,7 +62,7 @@ const Map = () => {
         {coreTiles}
         {topoLayers}
         {satelliteTiles}
-        {slopeTiles}
+        {/* {slopeTiles} */}
         {shadeTiles}
         <LocateMe />
       </MapContainer>

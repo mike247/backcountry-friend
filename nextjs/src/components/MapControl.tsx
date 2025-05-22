@@ -28,7 +28,7 @@ const MapControl = () => {
   };
 
   const controlGroups = Object.entries(map.dataLayers).map(
-    ([key, dataLayer], index) => {
+    ([key, dataLayer]) => {
       const controls = dataLayer.layers
         .filter(
           (layer) => (layer.control && !map.threeDimensions) || !layer.hideOn3d
@@ -47,9 +47,9 @@ const MapControl = () => {
       return (
         <Fragment key={key}>
           {controls}
-          {index < Object.keys(map.dataLayers).length - 1 && ( // Break lines in the middle
+          {/* {index < Object.keys(map.dataLayers).length - 1 && ( // Break lines in the middle
             <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
-          )}
+          )} */}
         </Fragment>
       );
     }
@@ -57,13 +57,13 @@ const MapControl = () => {
   return (
     <div className="fixed flex bottom-0 sm:bottom-auto sm:top-12 sm:right-0 sm:absolute above-map sm:m-2 cursor-pointer sm:flex-col flex-col-reverse items-center">
       <div
-        className={`w-screen sm:w-auto control-layer flex cursor-pointer relative transition-all duration-200 bg-slate-900/75 px-1 pt-2 pb-2 sm:rounded-lg text-white`}
+        className={`w-screen flex-wrap sm:w-auto control-layer flex cursor-pointer relative transition-all duration-200 bg-slate-900/75 px-1 py-1 sm:rounded-lg text-white`}
       >
         <>
           {controlGroups}
-          {!map.threeDimensions && (
+          {/* {!map.threeDimensions && (
             <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
-          )}
+          )} */}
 
           {map.threeDimensions && (
             <>
@@ -82,7 +82,7 @@ const MapControl = () => {
                   })
                 }
               />
-              <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
+              {/* <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div> */}
             </>
           )}
           {map.shaderLayers.map((layer) => {
@@ -94,7 +94,7 @@ const MapControl = () => {
               },
             });
           })}
-          <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
+          {/* <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div> */}
           <ControlButton
             icon={"/icons/3d.svg"}
             alt="toggle 3d"
@@ -141,24 +141,6 @@ const MapControl = () => {
           <TimeSlider />
         </div>
       )}
-      {/* 
-      <ControlButton
-        key={layer.control!.title}
-        icon={layer.control!.icon}
-        alt={layer.control!.alt}
-        title={layer.control!.title}
-        label={layer.control!.label}
-        variant={layer.active ? "active" : "inactive"}
-        onClick={() =>
-          dispatch({
-            type: "updateShader",
-            payload: {
-              id: layer.id,
-              active: !layer.active,
-            },
-          })
-        }
-      /> */}
     </div>
   );
 };

@@ -168,16 +168,16 @@ const satelliteLayers: DataLayer = {
 // };
 
 const shadeLayers: DataLayer = {
-  legend: {
-    gradient: {
-      max: "#020039",
-      mid: "rgba(255,255,255,0)",
-      min: "#f0ff00",
-    },
-    minText: "100% Light",
-    midText: "",
-    maxText: "0% Light",
-  },
+  // legend: {
+  //   gradient: {
+  //     max: "#020039",
+  //     mid: "rgba(255,255,255,0)",
+  //     min: "#f0ff00",
+  //   },
+  //   minText: "100% Light",
+  //   midText: "",
+  //   maxText: "0% Light",
+  // },
   layers: [
     {
       id: "9am",
