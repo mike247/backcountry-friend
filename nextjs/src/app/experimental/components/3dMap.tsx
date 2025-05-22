@@ -86,6 +86,15 @@ const MapComponent = () => {
     ];
   }, [map.baseMap, map.activeLayers, map.effectsState.threeDimensions]);
 
+  const shaderLayers = useMemo(() => {
+    return generateShaderLayers(
+      map.activeShaders,
+      map.effectsState.threeDimensions
+    );
+  }, [map.activeShaders, map.effectsState.threeDimensions]);
+
+  console.log(shaderLayers);
+
   return (
     <DeckGL
       initialViewState={map.meta}
@@ -93,13 +102,7 @@ const MapComponent = () => {
         map.effectsState.threeDimensions ? threedController : twodController
       }
       // effects={generateEffects(map)}
-      layers={[
-        ...dataLayers,
-        generateShaderLayers(
-          map.shaderLayers,
-          map.effectsState.threeDimensions
-        ),
-      ]}
+      layers={[...dataLayers, ...shaderLayers]}
     ></DeckGL>
   );
 };

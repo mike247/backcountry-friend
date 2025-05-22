@@ -34,7 +34,7 @@ export const shaderTilelayer = ({
   visible: boolean;
 }) => {
   return new TileLayer({
-    id: id,
+    id: id + threeDimensions,
     data: maptilerUrlBuilder("terrain-rgb-v2", "webp"),
     minZoom: 0,
     maxZoom: 14,

@@ -361,6 +361,7 @@ export type MapConfig = {
     };
   };
   activeLayers: Layer[];
+  activeShaders: ShaderLayer[];
   viewState: {
     maxPitch: number;
   };
@@ -384,6 +385,7 @@ export const initialMap: MapConfig = {
     maxPitch: 80,
   },
   activeLayers: [],
+  activeShaders: [],
   effectsState: {
     threeDimensions: false,
     sun: {
@@ -434,7 +436,7 @@ type Action =
         value: number;
       };
     }
-  | { type: "updateShader"; payload: { id: string; active: boolean } }
+  | { type: "updateShader"; payload: { shader: ShaderLayer; active: boolean } }
   | {
       type: "updateSlider";
       payload: {
@@ -512,7 +514,6 @@ export const mapReducer = (map: MapConfig, action: Action) => {
       };
     }
     case "updateSlider": {
-      console.log(action.payload);
       return {
         ...map,
         shaderLayers: shaderLayers.map((shader) => {
@@ -524,11 +525,23 @@ export const mapReducer = (map: MapConfig, action: Action) => {
       };
     }
     case "updateShader": {
+      const { shader: updatedShader, active } = action.payload;
+
+      // Hybrid - keep layers not actively looked at but selected running
+      // const activeLayers = map.activeLayers.concat(
+      //   map.dataLayers[dataLayer].layers.filter((layer) => layer.id === id)
+      // );
+
+      const activeShaders = active
+        ? map.activeShaders.concat([updatedShader])
+        : map.activeShaders.filter(
+            (activeShader) => activeShader.id !== updatedShader.id
+          );
       return {
         ...map,
+        activeShaders,
         shadeLayers: shaderLayers.map((shader) => {
-          if (shader.id === action.payload.id)
-            shader.active = action.payload.active;
+          if (shader.id === updatedShader.id) shader.active = active;
           return shader;
         }),
       };

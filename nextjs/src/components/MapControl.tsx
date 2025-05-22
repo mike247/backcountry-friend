@@ -80,7 +80,7 @@ const MapControl = ({ experimental }: { experimental?: boolean }) => {
                     dispatch({
                       type: "updateShader",
                       payload: {
-                        id: layer.id,
+                        shader: layer,
                         active: !layer.active,
                       },
                     })
