@@ -21,15 +21,17 @@ export const slopeModule = {
     }
     float t = clamp((slope)/60.0, 0.0, 1.0);
 
-    if (t < 0.5) {
-      float k = t / 0.50;
+    if (t < 0.4) {
+      float k = t / 0.4;
+      return mix(vec4(0.0, 1.0, 0.0, custom.opacity), vec4(0.0, 1.0, 0.0, custom.opacity), k); // Green → Green
+    } else if (t < 0.6) {
+      float k = (t-0.4)/ 0.20;
       return mix(vec4(0.0, 1.0, 0.0, custom.opacity), vec4(1.0, 1.0, 0.0, custom.opacity), k); // Green → Yellow
     } else if (t < 1.0) {
-      float k = (t - 0.5) / 0.5;
+      float k = (t - 0.6) / 0.4;
       return mix(vec4(1.0, 1.0, 0.0, custom.opacity), vec4(1.0, 0.00, 0.0, custom.opacity), k); // Yellow → Red
     } else {
-      float k = (t - 0.66) / 0.34;
-      return mix(vec4(1.0, 0.5, 0.0, custom.opacity), vec4(1.0, 0.0, 0.0 , custom.opacity), k); // Red → Red
+      return vec4(1.0, 0.0, 0.0, custom.opacity);
     }
   }
   
