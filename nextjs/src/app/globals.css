@@ -40,6 +40,10 @@ body {
   height: 100%;
 }
 
+.top-left {
+  top: 45px !important;
+}
+
 @media only screen and (max-width: 640px) {
   .leaflet-control-zoom {
     visibility: hidden;

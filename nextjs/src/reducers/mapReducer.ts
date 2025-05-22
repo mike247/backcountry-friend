@@ -1,5 +1,6 @@
 import { LatLngTuple } from "leaflet";
 import { ActionDispatch, createContext, useContext } from "react";
+import { MapViewState } from "@deck.gl/core";
 
 const baseMapMeta = {
   crossOrigin: true,
@@ -8,12 +9,12 @@ const baseMapMeta = {
 };
 
 const mapMeta = {
-  center: [-44.6943, 169.1417] as LatLngTuple,
-  zoom: 8,
+  center: [-41.2706, 173.284] as LatLngTuple,
+  zoom: 5,
   maxZoom: 16,
   minZoom: 1,
-  latitude: -44.6943,
-  longitude: 169.1417,
+  latitude: -41.2706,
+  longitude: 173.284,
   pitch: 0,
   maxPitch: 80,
 };
@@ -362,9 +363,7 @@ export type MapConfig = {
   };
   activeLayers: Layer[];
   activeShaders: string[];
-  viewState: {
-    maxPitch: number;
-  };
+  viewState: MapViewState;
   searchResults: {
     center: LatLngTuple | null;
     zoom: number;
@@ -381,9 +380,7 @@ export type MapConfig = {
 
 export const initialMap: MapConfig = {
   meta: mapMeta,
-  viewState: {
-    maxPitch: 80,
-  },
+  viewState: mapMeta,
   activeLayers: [],
   activeShaders: [],
   effectsState: {
@@ -437,6 +434,7 @@ type Action =
       };
     }
   | { type: "updateShader"; payload: { id: string; active: boolean } }
+  | { type: "updateViewState"; payload: { viewState: MapViewState } }
   | {
       type: "updateSlider";
       payload: {
@@ -511,6 +509,13 @@ export const mapReducer = (map: MapConfig, action: Action) => {
             timestamp: action.payload.value,
           },
         },
+      };
+    }
+    case "updateViewState": {
+      console.log(action.payload.viewState.zoom);
+      return {
+        ...map,
+        viewState: action.payload.viewState,
       };
     }
     case "updateSlider": {

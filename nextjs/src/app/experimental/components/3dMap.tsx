@@ -4,13 +4,17 @@ import {
   ShaderLayer,
   useMapContext,
 } from "@/reducers/mapReducer";
-import { DeckGL, MapView } from "deck.gl";
+import { MapView } from "deck.gl";
 import { createTileLayer } from "../layers/2dLayers";
 import { createTerrainLayer } from "../layers/3dLayers";
 // import { generateEffects } from "../layers/effects";
 import { useMemo } from "react";
 import { shaderTilelayer } from "../layers/shaderTileLayer";
 import shaderLookup from "../shaders/shaderLookup";
+import { DeckGL } from "@deck.gl/react";
+import { CompassWidget, ZoomWidget } from "@deck.gl/widgets";
+import debounce from "lodash.debounce";
+import "@deck.gl/widgets/stylesheet.css";
 
 const generateData = (
   baseMap: LayerType[],
@@ -57,7 +61,7 @@ const generateShaderLayers = (
 };
 
 const MapComponent = () => {
-  const { map } = useMapContext();
+  const { map, dispatch } = useMapContext();
 
   const twodController = new MapView({
     controller: {
@@ -103,8 +107,14 @@ const MapComponent = () => {
       views={
         map.effectsState.threeDimensions ? threedController : twodController
       }
+      onViewStateChange={debounce(
+        ({ viewState }) =>
+          dispatch({ type: "updateViewState", payload: { viewState } }),
+        200
+      )}
       // effects={generateEffects(map)}
       layers={[...dataLayers, ...shaderLayers]}
+      widgets={[new ZoomWidget({}), new CompassWidget({})]}
     ></DeckGL>
   );
 };
