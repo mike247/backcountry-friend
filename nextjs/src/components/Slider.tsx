@@ -7,12 +7,18 @@ const Slider = ({
   legend,
   title,
   min,
+  gradient,
   max,
 }: {
   shader: string;
   slider: string;
   value: number;
   title: string;
+  gradient: {
+    min: string;
+    mid: string;
+    max: string;
+  } | null;
   legend?: string[];
   min: number;
   max: number;
@@ -26,6 +32,11 @@ const Slider = ({
         id={title}
         type="range"
         value={(value / max) * 100}
+        style={{
+          backgroundImage: gradient
+            ? `linear-gradient(to right, ${gradient.min}, ${gradient.mid}, ${gradient.max})`
+            : "",
+        }}
         onChange={(e) => {
           dispatch({
             type: "updateSlider",

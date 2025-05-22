@@ -78,7 +78,19 @@ export type Layer = {
   };
 };
 
+type Legend = {
+  gradient: {
+    min: string;
+    mid: string;
+    max: string;
+  };
+  minText: string;
+  midText: string;
+  maxText: string;
+};
+
 export type ShaderLayer = Layer & {
+  legend?: Legend;
   sliders: {
     [key: string]: {
       value: number;
@@ -92,16 +104,7 @@ export type ShaderLayer = Layer & {
 };
 
 type DataLayer = {
-  legend?: {
-    gradient: {
-      min: string;
-      mid: string;
-      max: string;
-    };
-    minText: string;
-    midText: string;
-    maxText: string;
-  };
+  legend?: Legend;
   layers: Layer[];
 };
 
@@ -293,6 +296,16 @@ const shaderLayers: ShaderLayer[] = [
   {
     id: "gpuSlope",
     title: "Slope angle",
+    legend: {
+      gradient: {
+        min: "#00ff63",
+        mid: "#ffce00",
+        max: "#ff0900",
+      },
+      minText: "0 degrees",
+      midText: "30 Degrees",
+      maxText: ">60 degrees",
+    },
     control: {
       icon: "/icons/avalanche.svg",
       alt: "toggle gpu slope layer",

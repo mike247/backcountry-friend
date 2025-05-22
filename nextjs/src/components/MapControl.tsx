@@ -129,6 +129,7 @@ const MapControl = () => {
                     min={value.min}
                     max={value.max}
                     title={value.title}
+                    gradient={shader.legend ? shader.legend.gradient : null}
                   />
                 </div>
               );

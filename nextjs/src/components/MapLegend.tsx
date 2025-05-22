@@ -49,22 +49,26 @@ const LegendKey = ({
 const MapLegend = () => {
   const { map } = useMapContext();
 
-  const legends = Object.entries(map.dataLayers).reduce<JSX.Element[]>(
-    (acc, [key, layer]) => {
-      if (layer.legend && layer.layers.some((layer) => layer.active)) {
-        return acc.concat(
-          <div
-            key={key}
-            className={`flex-col sm:flex sm:flex-row justify-end bg-slate-800/75 rounded-lg overflow-hidden my-1 sm:flex`}
-          >
-            <LegendKey {...layer.legend!} />
-            <Gradient gradient={layer.legend!.gradient} />
-          </div>
-        );
-      }
-      return acc;
-    },
-    []
+  const legends = [];
+
+  legends.push(
+    Object.entries(map.dataLayers).reduce<JSX.Element[]>(
+      (acc, [key, layer]) => {
+        if (layer.legend && layer.layers.some((layer) => layer.active)) {
+          return acc.concat(
+            <div
+              key={key}
+              className={`flex-col sm:flex sm:flex-row justify-end bg-slate-800/75 rounded-lg overflow-hidden my-1 sm:flex`}
+            >
+              <LegendKey {...layer.legend!} />
+              <Gradient gradient={layer.legend!.gradient} />
+            </div>
+          );
+        }
+        return acc;
+      },
+      []
+    )
   );
 
   // TODO hacky but easy
