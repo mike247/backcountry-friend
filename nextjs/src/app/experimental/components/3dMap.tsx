@@ -32,10 +32,13 @@ const generateData = (
 };
 
 const generateShaderLayers = (
-  shaderLayers: ShaderLayer[],
+  activeShaders: string[],
+  shaders: ShaderLayer[],
   threeDimensions: boolean
 ) => {
-  return shaderLayers.map((shader) => {
+  return activeShaders.map((id) => {
+    const shader = shaders.find((shader) => shader.id === id);
+    if (!shader) return undefined;
     const shaderProps: { [key: string]: number } = {};
     Object.keys(shader.sliders).forEach((key) => {
       shaderProps[key] = shader.sliders[key].value;
@@ -89,11 +92,10 @@ const MapComponent = () => {
   const shaderLayers = useMemo(() => {
     return generateShaderLayers(
       map.activeShaders,
+      map.shaderLayers,
       map.effectsState.threeDimensions
     );
-  }, [map.activeShaders, map.effectsState.threeDimensions]);
-
-  console.log(shaderLayers);
+  }, [map.activeShaders, map.shaderLayers, map.effectsState.threeDimensions]);
 
   return (
     <DeckGL
