@@ -59,6 +59,7 @@ const baseMap: Layer[] = [
 
 export type Layer = {
   title: string;
+  hideOn3d?: boolean;
   id: string;
   control?: {
     icon: string;
@@ -126,42 +127,42 @@ const satelliteLayers: DataLayer = {
   ],
 };
 
-const slopeLayers: DataLayer = {
-  legend: {
-    gradient: {
-      min: "#00ff63",
-      mid: "#ffce00",
-      max: "#ff0900",
-    },
-    minText: "0 degrees",
-    midText: "30 Degrees",
-    maxText: ">60 degrees",
-  },
-  layers: [
-    {
-      id: "slope",
-      title: "Slope layer",
-      control: {
-        icon: "/icons/avalanche.svg",
-        alt: "show slope layer",
-        title: "Slope Hazards",
-        label: "Slope",
-      },
-      active: false,
-      url: maptilerUrlBuilder(
-        process.env.NEXT_PUBLIC_SLOPE_TILE_ID || "",
-        "png"
-      ),
-      meta: {
-        minZoom: mapMeta.minZoom,
-        maxZoom: mapMeta.maxZoom,
-        maxNativeZoom: 13,
-        minNativeZoom: 6,
-        opacity: 0.5,
-      },
-    },
-  ],
-};
+// const slopeLayers: DataLayer = {
+//   legend: {
+//     gradient: {
+//       min: "#00ff63",
+//       mid: "#ffce00",
+//       max: "#ff0900",
+//     },
+//     minText: "0 degrees",
+//     midText: "30 Degrees",
+//     maxText: ">60 degrees",
+//   },
+//   layers: [
+//     {
+//       id: "slope",
+//       title: "Slope layer",
+//       control: {
+//         icon: "/icons/avalanche.svg",
+//         alt: "show slope layer",
+//         title: "Slope Hazards",
+//         label: "Slope",
+//       },
+//       active: false,
+//       url: maptilerUrlBuilder(
+//         process.env.NEXT_PUBLIC_SLOPE_TILE_ID || "",
+//         "png"
+//       ),
+//       meta: {
+//         minZoom: mapMeta.minZoom,
+//         maxZoom: mapMeta.maxZoom,
+//         maxNativeZoom: 13,
+//         minNativeZoom: 6,
+//         opacity: 0.5,
+//       },
+//     },
+//   ],
+// };
 
 const shadeLayers: DataLayer = {
   legend: {
@@ -177,6 +178,7 @@ const shadeLayers: DataLayer = {
   layers: [
     {
       id: "9am",
+      hideOn3d: true,
       title: "Shade @ 9am",
       control: {
         icon: "/icons/morning.svg",
@@ -199,6 +201,7 @@ const shadeLayers: DataLayer = {
     },
     {
       id: "noon",
+      hideOn3d: true,
       title: "Shade @ noon",
       control: {
         icon: "/icons/midday.svg",
@@ -221,6 +224,7 @@ const shadeLayers: DataLayer = {
     },
     {
       id: "3pm",
+      hideOn3d: true,
       title: "Shade @ 3pm",
       control: {
         icon: "/icons/afternoon.svg",
@@ -304,7 +308,7 @@ const shaderLayers: ShaderLayer[] = [
     },
     sliders: {
       opacity: {
-        value: 0.3,
+        value: 0.4,
         legend: ["0", "1"],
         title: "Opacity",
         min: 0,
@@ -354,8 +358,8 @@ export type MapConfig = {
     pitch: number;
     maxPitch: number;
   };
+  threeDimensions: boolean;
   effectsState: {
-    threeDimensions: boolean;
     sun: {
       active: boolean;
       id?: string;
@@ -387,11 +391,11 @@ export const initialMap: MapConfig = {
   viewState: mapMeta,
   activeLayers: [],
   activeShaders: [],
+  threeDimensions: false,
   effectsState: {
-    threeDimensions: false,
     sun: {
       active: false,
-      intensity: 3,
+      intensity: 2,
       color: [255, 255, 255],
       timestamp: Date.now(),
     },
@@ -402,15 +406,15 @@ export const initialMap: MapConfig = {
   },
   baseMap,
   dataLayers: {
-    topoLayers,
     satelliteLayers,
-    // slopeLayers,
+    topoLayers,
     shadeLayers,
+    // slopeLayers,
   },
   shaderLayers,
 };
 
-type Action =
+export type Action =
   | {
       type: "updateLayerActive";
       payload: {
@@ -439,6 +443,7 @@ type Action =
     }
   | { type: "updateShader"; payload: { id: string; active: boolean } }
   | { type: "updateViewState"; payload: { viewState: MapViewState } }
+  | { type: "toggleSun"; payload: { active: boolean } }
   | {
       type: "updateSlider";
       payload: {
@@ -497,9 +502,13 @@ export const mapReducer = (map: MapConfig, action: Action) => {
     case "toggle3dMode": {
       return {
         ...map,
+        threeDimensions: action.payload.value,
         effectsState: {
           ...map.effectsState,
-          threeDimensions: action.payload.value,
+          sun: {
+            ...map.effectsState.sun,
+            active: action.payload.value ? map.effectsState.sun.active : false,
+          },
         },
       };
     }
@@ -549,6 +558,18 @@ export const mapReducer = (map: MapConfig, action: Action) => {
           if (shader.id === updatedId) shader.active = active;
           return shader;
         }),
+      };
+    }
+    case "toggleSun": {
+      return {
+        ...map,
+        effectsState: {
+          ...map.effectsState,
+          sun: {
+            ...map.effectsState.sun,
+            active: action.payload.active,
+          },
+        },
       };
     }
     default:

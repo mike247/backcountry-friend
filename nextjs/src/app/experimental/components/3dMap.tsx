@@ -7,7 +7,7 @@ import {
 import { MapView } from "deck.gl";
 import { createTileLayer } from "../layers/2dLayers";
 import { createTerrainLayer } from "../layers/3dLayers";
-// import { generateEffects } from "../layers/effects";
+import { generateEffects } from "../layers/effects";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { shaderTilelayer } from "../layers/shaderTileLayer";
 import shaderLookup from "../shaders/shaderLookup";
@@ -29,7 +29,9 @@ const generateData = (
 
   const allLayers = [
     ...coreTiles,
-    ...activeLayers.map((layer) => layerFunction(layer)),
+    ...activeLayers
+      .filter((layer) => !threeDimensions || !layer.hideOn3d)
+      .map((layer) => layerFunction(layer)),
   ];
 
   return allLayers;
@@ -72,7 +74,7 @@ const MapComponent = () => {
   // Only update `viewState` when 3D mode changes
   useEffect(() => {
     setViewState(latestViewState.current);
-  }, [map.effectsState.threeDimensions]);
+  }, [map.threeDimensions]);
 
   const twodController = new MapView({
     controller: {
@@ -96,45 +98,39 @@ const MapComponent = () => {
 
   const dataLayers = useMemo(() => {
     return [
-      ...generateData(
-        map.baseMap,
-        map.activeLayers,
-        map.effectsState.threeDimensions
-      ),
+      ...generateData(map.baseMap, map.activeLayers, map.threeDimensions),
     ];
-  }, [map.baseMap, map.activeLayers, map.effectsState.threeDimensions]);
+  }, [map.baseMap, map.activeLayers, map.threeDimensions]);
 
   const shaderLayers = useMemo(() => {
     return generateShaderLayers(
       map.activeShaders,
       map.shaderLayers,
-      map.effectsState.threeDimensions
+      map.threeDimensions
     );
-  }, [map.activeShaders, map.shaderLayers, map.effectsState.threeDimensions]);
+  }, [map.activeShaders, map.shaderLayers, map.threeDimensions]);
 
   return (
     <DeckGL
-      key={map.effectsState.threeDimensions ? "deck-3d" : "deck-2d"} // force remount
+      key={map.threeDimensions ? "deck-3d" : "deck-2d"} // force remount
       id="twoDimensions"
       initialViewState={
-        map.effectsState.threeDimensions // Dimension specific view conditions
+        map.threeDimensions // Dimension specific view conditions
           ? { ...viewState, maxPitch: 80, pitch: 45 }
           : { ...viewState, maxPitch: 0, pitch: 0, bearing: 0 }
       }
-      views={
-        map.effectsState.threeDimensions ? threedController : twodController
-      }
+      views={map.threeDimensions ? threedController : twodController}
       onViewStateChange={debounce(
         ({ viewState }) =>
           dispatch({ type: "updateViewState", payload: { viewState } }),
         200
       )}
-      // effects={generateEffects(map)}
+      effects={generateEffects(map)}
       layers={[...dataLayers, ...shaderLayers]}
       widgets={[new ZoomWidget({}), new CompassWidget({})]}
     ></DeckGL>
   );
-  // return <>{map.effectsState.threeDimensions ? experimentalMap : baseMap}</>;
+  // return <>{map.threeDimensions ? experimentalMap : baseMap}</>;
 };
 
 export default MapComponent;

@@ -1,39 +1,49 @@
 import { Fragment } from "react";
 import ControlButton from "./ControlButton";
-import { useMapContext } from "../reducers/mapReducer";
+import {
+  Action,
+  Layer,
+  ShaderLayer,
+  useMapContext,
+} from "../reducers/mapReducer";
 // import TimeSlider from "./TimeSlider";
 import Slider from "./Slider";
+import TimeSlider from "./TimeSlider";
 
-const MapControl = ({ experimental }: { experimental?: boolean }) => {
+const MapControl = () => {
   const { map, dispatch } = useMapContext();
+
+  const controlButton = (layer: Layer | ShaderLayer, payload: Action) => {
+    return (
+      <ControlButton
+        key={layer.control!.title}
+        icon={layer.control!.icon}
+        alt={layer.control!.alt}
+        title={layer.control!.title}
+        label={layer.control!.label}
+        variant={layer.active ? "active" : "inactive"}
+        onClick={() => dispatch(payload)}
+      />
+    );
+  };
 
   const controlGroups = Object.entries(map.dataLayers).map(
     ([key, dataLayer], index) => {
       const controls = dataLayer.layers
-        .filter((layer) => layer.control)
+        .filter(
+          (layer) => (layer.control && !map.threeDimensions) || !layer.hideOn3d
+        )
         .map((layer) => {
-          return (
-            // TODO Should be { layer.control && ....}
-            <ControlButton
-              key={layer.control!.title}
-              icon={layer.control!.icon}
-              alt={layer.control!.alt}
-              title={layer.control!.title}
-              label={layer.control!.label}
-              variant={layer.active ? "active" : "inactive"}
-              onClick={() =>
-                dispatch({
-                  type: "updateLayerActive",
-                  payload: {
-                    id: layer.id,
-                    dataLayer: key as keyof typeof map.dataLayers,
-                    active: !layer.active,
-                  },
-                })
-              }
-            />
-          );
+          return controlButton(layer, {
+            type: "updateLayerActive",
+            payload: {
+              id: layer.id,
+              dataLayer: key as keyof typeof map.dataLayers,
+              active: !layer.active,
+            },
+          });
         });
+
       return (
         <Fragment key={key}>
           {controls}
@@ -49,49 +59,58 @@ const MapControl = ({ experimental }: { experimental?: boolean }) => {
       <div
         className={`w-screen sm:w-auto control-layer flex cursor-pointer relative transition-all duration-200 bg-slate-900/75 px-1 pt-2 pb-2 sm:rounded-lg text-white`}
       >
-        {experimental && (
-          <>
-            <ControlButton
-              icon={"/icons/3d.svg"}
-              alt="toggle 3d"
-              title="3d"
-              label="3d"
-              variant={map.effectsState.threeDimensions ? "active" : "inactive"}
-              onClick={() =>
-                dispatch({
-                  type: "toggle3dMode",
-                  payload: {
-                    value: !map.effectsState.threeDimensions,
-                  },
-                })
-              }
-            />
+        <>
+          {controlGroups}
+          {!map.threeDimensions && (
             <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
-            {map.shaderLayers.map((layer) => {
-              return (
-                <ControlButton
-                  key={layer.control!.title}
-                  icon={layer.control!.icon}
-                  alt={layer.control!.alt}
-                  title={layer.control!.title}
-                  label={layer.control!.label}
-                  variant={layer.active ? "active" : "inactive"}
-                  onClick={() =>
-                    dispatch({
-                      type: "updateShader",
-                      payload: {
-                        id: layer.id,
-                        active: !layer.active,
-                      },
-                    })
-                  }
-                />
-              );
-            })}
-            <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
-          </>
-        )}
-        {controlGroups}
+          )}
+
+          {map.threeDimensions && (
+            <>
+              <ControlButton
+                icon={"/icons/midday.svg"}
+                alt="toggle dynamic sun"
+                title="Sun"
+                label="Sun"
+                variant={map.effectsState.sun.active ? "active" : "inactive"}
+                onClick={() =>
+                  dispatch({
+                    type: "toggleSun",
+                    payload: {
+                      active: !map.effectsState.sun.active,
+                    },
+                  })
+                }
+              />
+              <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
+            </>
+          )}
+          {map.shaderLayers.map((layer) => {
+            return controlButton(layer, {
+              type: "updateShader",
+              payload: {
+                id: layer.id,
+                active: !layer.active,
+              },
+            });
+          })}
+          <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
+          <ControlButton
+            icon={"/icons/3d.svg"}
+            alt="toggle 3d"
+            title="3d"
+            label="3d"
+            variant={map.threeDimensions ? "active" : "inactive"}
+            onClick={() =>
+              dispatch({
+                type: "toggle3dMode",
+                payload: {
+                  value: !map.threeDimensions,
+                },
+              })
+            }
+          />
+        </>
       </div>
 
       {map.shaderLayers
@@ -116,9 +135,29 @@ const MapControl = ({ experimental }: { experimental?: boolean }) => {
             });
         })}
 
-      {map.effectsState.threeDimensions && false && (
-        <div className="w-full">{/* <TimeSlider />  */}</div>
+      {map.effectsState.sun.active && (
+        <div className="w-full">
+          <TimeSlider />
+        </div>
       )}
+      {/* 
+      <ControlButton
+        key={layer.control!.title}
+        icon={layer.control!.icon}
+        alt={layer.control!.alt}
+        title={layer.control!.title}
+        label={layer.control!.label}
+        variant={layer.active ? "active" : "inactive"}
+        onClick={() =>
+          dispatch({
+            type: "updateShader",
+            payload: {
+              id: layer.id,
+              active: !layer.active,
+            },
+          })
+        }
+      /> */}
     </div>
   );
 };
