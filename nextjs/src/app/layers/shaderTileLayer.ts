@@ -1,4 +1,3 @@
-import { maptilerUrlBuilder } from "@/reducers/mapReducer";
 import { _TerrainExtension as TerrainExtension } from "@deck.gl/extensions";
 import { TileLayer } from "deck.gl";
 import { slopeModule } from "../shaders/slopeShader";
