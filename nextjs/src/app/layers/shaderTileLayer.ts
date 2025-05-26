@@ -24,20 +24,26 @@ export const shaderTilelayer = ({
   threeDimensions,
   id,
   shader,
+  minZoom,
+  maxZoom,
   shaderProps,
+  data,
   visible,
 }: {
   id: string;
   threeDimensions: boolean;
   shader: (shaderProps: { [key: string]: number }) => string;
+  minZoom: number;
+  maxZoom: number;
+  data: string;
   shaderProps: { [key: string]: number };
   visible: boolean;
 }) => {
   return new TileLayer({
     id: id + threeDimensions,
-    data: maptilerUrlBuilder("terrain-rgb-v2", "webp"),
-    minZoom: 0,
-    maxZoom: 14,
+    data,
+    minZoom,
+    maxZoom,
     opacity: 1,
     tileSize: 512,
     color: [255, 255, 255],

@@ -44,14 +44,7 @@ const MapControl = () => {
           });
         });
 
-      return (
-        <Fragment key={key}>
-          {controls}
-          {/* {index < Object.keys(map.dataLayers).length - 1 && ( // Break lines in the middle
-            <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
-          )} */}
-        </Fragment>
-      );
+      return <Fragment key={key}>{controls}</Fragment>;
     }
   );
   return (
@@ -61,10 +54,6 @@ const MapControl = () => {
       >
         <>
           {controlGroups}
-          {/* {!map.threeDimensions && (
-            <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div>
-          )} */}
-
           {map.threeDimensions && (
             <>
               <ControlButton
@@ -82,7 +71,6 @@ const MapControl = () => {
                   })
                 }
               />
-              {/* <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div> */}
             </>
           )}
           {map.shaderLayers.map((layer) => {
@@ -94,7 +82,6 @@ const MapControl = () => {
               },
             });
           })}
-          {/* <div className="inline-block min-h-[1em] w-0.5 self-stretch bg-neutral-100 dark:bg-white/75 ml-1 mr-1"></div> */}
           <ControlButton
             icon={"/icons/3d.svg"}
             alt="toggle 3d"

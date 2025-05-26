@@ -10,7 +10,7 @@ import {
   mapReducer,
 } from "../../reducers/mapReducer.ts";
 
-const DynamicMap = dynamic(() => import("./components/3dMap.tsx"), {
+const DynamicMap = dynamic(() => import("../../components/Map.tsx"), {
   loading: () => <p>Loading...</p>,
   ssr: false,
 });

@@ -313,6 +313,7 @@ const shaderLayers: ShaderLayer[] = [
       label: "Slope",
     },
     active: false,
+    // url: maptilerUrlBuilder("01970637-6934-727b-8da9-53393cfd4b5d", "png"),
     url: maptilerUrlBuilder("terrain-rgb-v2", "webp"),
     meta: {
       minZoom: mapMeta.minZoom,

@@ -6,13 +6,10 @@ import dynamic from "next/dynamic";
 import { useReducer } from "react";
 import { initialMap, MapContext, mapReducer } from "../reducers/mapReducer.ts";
 
-const DynamicMap = dynamic(
-  () => import("./experimental/components/3dMap.tsx"),
-  {
-    loading: () => <p>Loading...</p>,
-    ssr: false,
-  }
-);
+const DynamicMap = dynamic(() => import("../components/Map.tsx"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
 
 export default function Home() {
   const [map, dispatch] = useReducer(mapReducer, initialMap);
