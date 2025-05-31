@@ -26,13 +26,36 @@ export const slopeModule = {
       float k = t / 0.4;
       return mix(vec4(0.0, 1.0, 0.0, custom.opacity), vec4(1.0, 1.0, 0.0, custom.opacity), k); // Green → Green
     } else if (t < 0.66) {
-      float k = (t-0.4)/ 0.20;
+      float k = (t-0.4)/ 0.26;
       return mix(vec4(1.0, 1.0, 0.0, custom.opacity), vec4(1.0, 0.0, 0.0, custom.opacity), k); // Green → Yellow
     } else if (t < 1.0) {
-      float k = (t - 0.6) / 0.4;
+      float k = (t - 0.6) / 0.34;
       return mix(vec4(1.0, 0.0, 0.0, custom.opacity), vec4(0.0, 0.0, 0.0, custom.opacity), k); // Yellow → Red
     } else {
       return vec4(0.0, 0.0, 0.0, custom.opacity);
+    }
+  }
+
+   vec4 avalancheColor(float slope, float elevation) {
+    float t = clamp((slope)/90.0, 0.0, 1.0);
+
+    if (t < 0.33) {
+      float k = t / 0.33;
+      return mix(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), k); // Translucent
+    } else if (t < 0.38) {
+      float k = (t-0.33)/ 0.05;
+      return mix(vec4(1.0, 1.0, 0.0, custom.opacity), vec4(1.0, 0.0, 0.0, custom.opacity), k); // Yellow → Red
+    } else if (t < 0.43) {
+      float k = (t - 0.38) / 0.05;
+      return mix(vec4(1.0, 0.0, 0.0, custom.opacity), vec4(0.0, 0.0, 0.0, custom.opacity), k); // red → black
+    } else if (t < 0.5) {
+      float k = (t - 0.43) / 0.07;
+      return mix(vec4(0.0, 0.0, 0.0, custom.opacity), vec4(1.0, 0.0, 0.0, custom.opacity), k); // black → red
+    } else if (t < 0.66) {
+      float k = (t - 0.5) / 0.16;
+      return mix(vec4(1.0, 0.0, 0.0, custom.opacity), vec4(1.0, 1.0, 0.0, custom.opacity), k); // red → yellow
+    } else {
+      return vec4(0.0, 0.0, 0.0, 0.0);
     }
   }
   
