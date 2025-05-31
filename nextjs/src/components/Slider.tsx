@@ -20,7 +20,6 @@ const Slider = ({
   max: number;
 }) => {
   const { dispatch } = useMapContext();
-  console.log(`linear-gradient(to right, ${gradient.join(",")})`);
 
   return (
     <div className="aboveMap bg-slate-900/75 sm:rounded-lg my-1 p-2 flex-col justify-center text-white">

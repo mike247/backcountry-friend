@@ -1,5 +1,5 @@
 import { _TerrainExtension as TerrainExtension } from "@deck.gl/extensions";
-import { LineLayer, TileLayer } from "deck.gl";
+import { TileLayer } from "deck.gl";
 import { slopeModule } from "../shaders/slopeShader";
 import { CustomBitmapLayer } from "./customBitmapLayer";
 import { GL } from "@luma.gl/constants";
@@ -63,7 +63,6 @@ export const shaderTilelayer = ({
       const [[, minLat], [, maxLat]] = bb;
       const centerLat = (minLat + maxLat) / 2;
       const metersPerPixel = getMetersPerPixel(centerLat, tile.zoom); // rough, assumes near equator
-      console.log(tile.zoom, metersPerPixel, bb);
       return new CustomBitmapLayer({
         id,
         image: data,

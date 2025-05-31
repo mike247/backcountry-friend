@@ -1,11 +1,10 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import {
   Layer as LayerType,
-  maptilerUrlBuilder,
   ShaderLayer,
   useMapContext,
 } from "@/reducers/mapReducer";
-import { MapView, PathLayer, TileLayer } from "deck.gl";
+import { MapView } from "deck.gl";
 import { createTileLayer } from "../app/layers/2dLayers";
 import { createTerrainLayer } from "../app/layers/3dLayers";
 import { generateEffects } from "../app/layers/effects";
@@ -62,8 +61,6 @@ const generateShaderLayers = (
       shader: shaderLookup[shader.id],
     });
   });
-
-  // return [SlopeTileLayer(threeDimensions)];
 };
 
 const MapComponent = () => {
@@ -114,41 +111,6 @@ const MapComponent = () => {
     );
   }, [map.activeShaders, map.shaderLayers, map.threeDimensions]);
 
-  const TileDebugLayer = new TileLayer({
-    id: "tile-boundary-debug",
-    tileSize: 512,
-    minZoom: 0,
-    maxZoom: 15,
-    data: maptilerUrlBuilder("01971055-af3c-776d-a91e-b7b117d2b300", "png"), // or any source
-
-    renderSubLayers: ({ tile }) => {
-      const { boundingBox: bbox } = tile;
-
-      const west = bbox[0][0];
-      const east = bbox[1][0];
-      const north = bbox[1][0];
-      const south = bbox[1][1];
-
-      const border = [
-        [west, south],
-        [west, north],
-        [east, north],
-        [east, south],
-        [west, south], // close the loop
-      ];
-
-      return new PathLayer({
-        id: `tile-border-${west}-${south}-${north}`,
-        data: [{ path: border }],
-        getPath: (d) => d.path,
-        getWidth: 2,
-        getColor: [255, 0, 0],
-        widthMinPixels: 1,
-        pickable: false,
-      });
-    },
-  });
-
   return (
     <DeckGL
       key={map.threeDimensions ? "deck-3d" : "deck-2d"} // force remount
@@ -165,7 +127,7 @@ const MapComponent = () => {
         200
       )}
       effects={generateEffects(map)}
-      layers={[...dataLayers, ...shaderLayers, TileDebugLayer]}
+      layers={[...dataLayers, ...shaderLayers]}
       widgets={[new ZoomWidget({}), new CompassWidget({})]}
     ></DeckGL>
   );

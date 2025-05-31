@@ -11,8 +11,8 @@ const shaderLookup: {
               uniform sampler2D bitmapTexture;
         
                 void main() {
-                    float dx =  1.0 / 512.0;
-                    float dy =  1.0 / 512.0;
+                    float dx =  1.0 / custom.textureSize.x;
+                    float dy =  1.0 / custom.textureSize.y;
         
                     vec3 center = texture(bitmapTexture, vTexCoord).rgb;
                     vec3 left   = texture(bitmapTexture, vTexCoord + vec2(-dx, 0.0)).rgb;
