@@ -1,7 +1,8 @@
 import { _TerrainExtension as TerrainExtension } from "@deck.gl/extensions";
-import { TileLayer } from "deck.gl";
+import { LineLayer, TileLayer } from "deck.gl";
 import { slopeModule } from "../shaders/slopeShader";
 import { CustomBitmapLayer } from "./customBitmapLayer";
+import { GL } from "@luma.gl/constants";
 
 function getMetersPerPixel(
   latitude: number,
@@ -45,7 +46,13 @@ export const shaderTilelayer = ({
     maxZoom,
     opacity: 1,
     tileSize: 512,
-    color: [255, 255, 255],
+    parameters: {
+      minFilter: GL.NEAREST,
+      magFilter: GL.NEAREST,
+      wrapS: GL.CLAMP_TO_EDGE,
+      wrapT: GL.CLAMP_TO_EDGE,
+    },
+    color: [256, 256, 256],
     visible,
     extensions: threeDimensions ? [new TerrainExtension()] : [],
     renderSubLayers: ({ tile, data, id }) => {
@@ -56,6 +63,7 @@ export const shaderTilelayer = ({
       const [[, minLat], [, maxLat]] = bb;
       const centerLat = (minLat + maxLat) / 2;
       const metersPerPixel = getMetersPerPixel(centerLat, tile.zoom); // rough, assumes near equator
+      console.log(tile.zoom, metersPerPixel, bb);
       return new CustomBitmapLayer({
         id,
         image: data,

@@ -4,7 +4,7 @@ export const slopeModule = {
   precision highp float;
 
   float decodeElevation(vec3 rgb) {
-    vec3 color = rgb * 255.0;
+    vec3 color = rgb * 256.0;
     return -10000.0 + ((color.r * 256.0 * 256.0 + color.g * 256.0 + color.b) * 0.1);
   }
 
@@ -16,22 +16,23 @@ export const slopeModule = {
   }
 
   vec4 slopeColor(float slope, float elevation) {
+    float t = clamp((slope)/90.0, 0.0, 1.0);
+
     if (slope < custom.cutoffAngle || elevation < custom.cutoffElevation) {
       return vec4(0.0, 0.0, 0.0, 0.0); // Fully transparent
     }
-    float t = clamp((slope)/60.0, 0.0, 1.0);
 
-    if (t < 0.4) {
+    if (t < 0.33) {
       float k = t / 0.4;
-      return mix(vec4(0.0, 1.0, 0.0, custom.opacity), vec4(0.0, 1.0, 0.0, custom.opacity), k); // Green → Green
-    } else if (t < 0.6) {
+      return mix(vec4(0.0, 1.0, 0.0, custom.opacity), vec4(1.0, 1.0, 0.0, custom.opacity), k); // Green → Green
+    } else if (t < 0.66) {
       float k = (t-0.4)/ 0.20;
-      return mix(vec4(0.0, 1.0, 0.0, custom.opacity), vec4(1.0, 1.0, 0.0, custom.opacity), k); // Green → Yellow
+      return mix(vec4(1.0, 1.0, 0.0, custom.opacity), vec4(1.0, 0.0, 0.0, custom.opacity), k); // Green → Yellow
     } else if (t < 1.0) {
       float k = (t - 0.6) / 0.4;
-      return mix(vec4(1.0, 1.0, 0.0, custom.opacity), vec4(1.0, 0.00, 0.0, custom.opacity), k); // Yellow → Red
+      return mix(vec4(1.0, 0.0, 0.0, custom.opacity), vec4(0.0, 0.0, 0.0, custom.opacity), k); // Yellow → Red
     } else {
-      return vec4(1.0, 0.0, 0.0, custom.opacity);
+      return vec4(0.0, 0.0, 0.0, custom.opacity);
     }
   }
   

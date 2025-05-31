@@ -1,23 +1,20 @@
 import { JSX } from "react";
 import { useMapContext } from "../reducers/mapReducer";
 
-const Gradient = ({
-  gradient,
-}: {
-  gradient: { min: string; mid: string; max: string };
-}) => {
+const Gradient = ({ gradient }: { gradient: string[] }) => {
+  const linearGradient = gradient.join(",");
   return (
     <>
       <div
         className={`w-auto h-6 sm:h-36 sm:w-6 bg-white hidden sm:block`}
         style={{
-          backgroundImage: `linear-gradient(${gradient.min}, ${gradient.mid}, ${gradient.max})`,
+          backgroundImage: `linear-gradient(to top, ${linearGradient})`,
         }}
       />
       <div
         className={`w-auto h-6 sm:h-36 sm:w-6 bg-white sm:hidden`}
         style={{
-          backgroundImage: `linear-gradient(to right, ${gradient.min}, ${gradient.mid}, ${gradient.max})`,
+          backgroundImage: `linear-gradient(to right, ${linearGradient})`,
         }}
       />
     </>
@@ -38,7 +35,7 @@ const LegendKey = ({
   maxText: string;
 }) => {
   return (
-    <div className="flex sm:flex-col justify-between m-2 text-right">
+    <div className="flex sm:flex-col-reverse justify-between m-2 text-right">
       <LegendText text={minText} />
       <LegendText text={midText} />
       <LegendText text={maxText} />

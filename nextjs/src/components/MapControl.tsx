@@ -6,7 +6,6 @@ import {
   ShaderLayer,
   useMapContext,
 } from "../reducers/mapReducer";
-// import TimeSlider from "./TimeSlider";
 import Slider from "./Slider";
 import TimeSlider from "./TimeSlider";
 

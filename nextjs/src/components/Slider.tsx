@@ -14,16 +14,13 @@ const Slider = ({
   slider: string;
   value: number;
   title: string;
-  gradient: {
-    min: string;
-    mid: string;
-    max: string;
-  } | null;
+  gradient: string[] | null;
   legend?: string[];
   min: number;
   max: number;
 }) => {
   const { dispatch } = useMapContext();
+  console.log(`linear-gradient(to right, ${gradient.join(",")})`);
 
   return (
     <div className="aboveMap bg-slate-900/75 sm:rounded-lg my-1 p-2 flex-col justify-center text-white">
@@ -34,7 +31,7 @@ const Slider = ({
         value={(value / max) * 100}
         style={{
           backgroundImage: gradient
-            ? `linear-gradient(to right, ${gradient.min}, ${gradient.mid}, ${gradient.max})`
+            ? `linear-gradient(to right, ${gradient.join(",")})`
             : "",
         }}
         onChange={(e) => {

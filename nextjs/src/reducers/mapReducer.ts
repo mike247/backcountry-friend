@@ -27,7 +27,7 @@ export const ELEVATION_DECODER = {
   rScaler: 6553.6,
   gScaler: 25.6,
   bScaler: 0.1,
-  offset: -10000,
+  offset: -10000.0,
 };
 
 export const linzUrlBuilder = (layerId: string) => {
@@ -79,11 +79,7 @@ export type Layer = {
 };
 
 type Legend = {
-  gradient: {
-    min: string;
-    mid: string;
-    max: string;
-  };
+  gradient: string[];
   minText: string;
   midText: string;
   maxText: string;
@@ -168,16 +164,12 @@ const satelliteLayers: DataLayer = {
 // };
 
 const shadeLayers: DataLayer = {
-  // legend: {
-  //   gradient: {
-  //     max: "#020039",
-  //     mid: "rgba(255,255,255,0)",
-  //     min: "#f0ff00",
-  //   },
-  //   minText: "100% Light",
-  //   midText: "",
-  //   maxText: "0% Light",
-  // },
+  legend: {
+    gradient: ["#020039", "rgba(255,255,255,0)", "#f0ff00"],
+    minText: "0% Light",
+    midText: "",
+    maxText: "100% Light",
+  },
   layers: [
     {
       id: "9am",
@@ -197,8 +189,8 @@ const shadeLayers: DataLayer = {
       meta: {
         minZoom: mapMeta.minZoom,
         maxZoom: mapMeta.maxZoom,
-        maxNativeZoom: 10,
-        minNativeZoom: 10,
+        maxNativeZoom: 13,
+        minNativeZoom: 6,
         opacity: 0.5,
       },
     },
@@ -297,27 +289,25 @@ const shaderLayers: ShaderLayer[] = [
     id: "gpuSlope",
     title: "Slope angle",
     legend: {
-      gradient: {
-        min: "#00ff63",
-        mid: "#ffce00",
-        max: "#ff0900",
-      },
+      gradient: ["#00ff63", "#ffce00", "#ff0900", "#000000"],
       minText: "0 degrees",
-      midText: "30 Degrees",
-      maxText: ">60 degrees",
+      midText: "45 Degrees",
+      maxText: "90 degrees",
     },
     control: {
-      icon: "/icons/avalanche.svg",
+      icon: "/icons/angle.svg",
       alt: "toggle gpu slope layer",
       title: "Slope angle",
       label: "Slope",
     },
     active: false,
-    // url: maptilerUrlBuilder("01970637-6934-727b-8da9-53393cfd4b5d", "png"),
     url: maptilerUrlBuilder("terrain-rgb-v2", "webp"),
+    // url: maptilerUrlBuilder("01971bf1-fd00-70c5-a202-70f8ee2dc5aa", "png"),
     meta: {
-      minZoom: mapMeta.minZoom,
-      maxZoom: 14,
+      minZoom: 1,
+      maxZoom: 12,
+      minNativeZoom: 1,
+      maxNativeZoom: 14,
       opacity: 0.5,
     },
     sliders: {
@@ -351,10 +341,10 @@ const shaderLayers: ShaderLayer[] = [
       },
       cutoffAngle: {
         title: "Min angle",
-        value: 30,
-        legend: ["0", "10", "20", "30", "40", "50", "60"],
+        value: 20,
+        legend: ["0", "10", "20", "30", "40", "50", "60", "70", "80", "90"],
         min: 0,
-        max: 60,
+        max: 90,
         hidden: false,
       },
     },
