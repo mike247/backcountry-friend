@@ -1,5 +1,5 @@
 import Image from "next/image";
-import SearchBox from "./SearchBox";
+// import SearchBox from "./SearchBox";
 
 const NavBar = ({ titleOverride }: { titleOverride?: string }) => {
   return (
@@ -10,11 +10,11 @@ const NavBar = ({ titleOverride }: { titleOverride?: string }) => {
             <div className="flex sm:space-x-4">
               <Image src="/logo.png" alt="logo" height={20} width={30} />
               <span className="ext-sm font-medium text-white hidden sm:block">
-                {titleOverride ? titleOverride : "Backcountry Friend"}
+                {titleOverride ? titleOverride : "Backcountry Maps"}
               </span>
             </div>
           </div>
-          <SearchBox />
+          {/* <SearchBox /> */}
         </div>
       </div>
     </nav>

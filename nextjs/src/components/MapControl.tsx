@@ -87,14 +87,14 @@ const MapControl = () => {
             title="3d"
             label="3d"
             variant={map.threeDimensions ? "active" : "inactive"}
-            onClick={() =>
+            onClick={() => {
               dispatch({
                 type: "toggle3dMode",
                 payload: {
                   value: !map.threeDimensions,
                 },
-              })
-            }
+              });
+            }}
           />
         </>
       </div>

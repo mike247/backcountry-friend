@@ -305,7 +305,7 @@ const shaderLayers: ShaderLayer[] = [
     // url: maptilerUrlBuilder("01971bf1-fd00-70c5-a202-70f8ee2dc5aa", "png"),
     meta: {
       minZoom: 1,
-      maxZoom: 12,
+      maxZoom: 14,
       minNativeZoom: 1,
       maxNativeZoom: 14,
       opacity: 0.5,
@@ -507,6 +507,23 @@ export const mapReducer = (map: MapConfig, action: Action) => {
       return {
         ...map,
         threeDimensions: action.payload.value,
+        activeLayers: map.activeLayers.filter((activeLayer) => {
+          map.dataLayers.shadeLayers.layers.some(
+            (layer) => layer.id !== activeLayer.id
+          );
+        }),
+        dataLayers: {
+          ...map.dataLayers,
+          shadeLayers: {
+            ...map.dataLayers.shadeLayers,
+            layers: map.dataLayers.shadeLayers.layers.map((layer) => {
+              return {
+                ...layer,
+                active: false,
+              };
+            }),
+          },
+        },
         effectsState: {
           ...map.effectsState,
           sun: {
