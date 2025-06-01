@@ -42,20 +42,18 @@ export const maptilerUrlBuilder = (
   return `/api/maps/data?x={x}&y={y}&z={z}&layerId=${layerId}&format=${format}&type=${type}`;
 };
 
-const baseMap: Layer[] = [
-  {
-    id: "globalTpop",
-    title: "Topo",
-    url: maptilerUrlBuilder("outdoor-v2", "png", "maps"),
-    active: true,
-    meta: {
-      ...baseMapMeta,
-      minZoom: mapMeta.minZoom,
-      maxZoom: mapMeta.maxZoom,
-      opacity: 1,
-    },
+const baseMap: Layer = {
+  id: "globalTpop",
+  title: "Topo",
+  url: maptilerUrlBuilder("outdoor-v2", "png", "maps"),
+  active: true,
+  meta: {
+    ...baseMapMeta,
+    minZoom: mapMeta.minZoom,
+    maxZoom: mapMeta.maxZoom,
+    opacity: 1,
   },
-];
+};
 
 export type Layer = {
   title: string;
@@ -437,6 +435,7 @@ export type MapConfig = {
       timestamp: number;
     };
   };
+  activeBase: Layer;
   activeLayers: Layer[];
   activeShaders: string[];
   viewState: MapViewState;
@@ -444,10 +443,9 @@ export type MapConfig = {
     center: LatLngTuple | null;
     zoom: number;
   };
-  baseMap: Layer[];
+  baseMap: Layer;
+  baseLayers: Layer[];
   dataLayers: {
-    topoLayers: DataLayer;
-    satelliteLayers: DataLayer;
     // slopeLayers: DataLayer;
     shadeLayers: DataLayer;
   };
@@ -458,6 +456,7 @@ export const initialMap: MapConfig = {
   meta: mapMeta,
   viewState: mapMeta,
   activeLayers: [],
+  activeBase: baseMap,
   activeShaders: [],
   threeDimensions: false,
   effectsState: {
@@ -473,9 +472,8 @@ export const initialMap: MapConfig = {
     zoom: 12,
   },
   baseMap,
+  baseLayers: [...satelliteLayers.layers, ...topoLayers.layers],
   dataLayers: {
-    satelliteLayers,
-    topoLayers,
     shadeLayers,
     // slopeLayers,
   },
@@ -512,6 +510,7 @@ export type Action =
   | { type: "updateShader"; payload: { id: string; active: boolean } }
   | { type: "updateViewState"; payload: { viewState: MapViewState } }
   | { type: "toggleSun"; payload: { active: boolean } }
+  | { type: "updateActiveBaseLayer"; payload: { layer: Layer } }
   | {
       type: "updateSlider";
       payload: {
@@ -523,6 +522,16 @@ export type Action =
 
 export const mapReducer = (map: MapConfig, action: Action) => {
   switch (action.type) {
+    case "updateActiveBaseLayer": {
+      const newBase =
+        action.payload.layer.id === map.activeBase.id
+          ? baseMap
+          : action.payload.layer;
+      return {
+        ...map,
+        activeBase: newBase,
+      };
+    }
     case "updateLayerActive":
       const { dataLayer, id, active } = action.payload;
       const dataLayers = {

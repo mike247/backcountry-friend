@@ -12,7 +12,11 @@ import TimeSlider from "./TimeSlider";
 const MapControl = () => {
   const { map, dispatch } = useMapContext();
 
-  const controlButton = (layer: Layer | ShaderLayer, payload: Action) => {
+  const controlButton = (
+    layer: Layer | ShaderLayer,
+    payload: Action,
+    active: boolean
+  ) => {
     return (
       <ControlButton
         key={layer.control!.title}
@@ -20,11 +24,26 @@ const MapControl = () => {
         alt={layer.control!.alt}
         title={layer.control!.title}
         label={layer.control!.label}
-        variant={layer.active ? "active" : "inactive"}
+        variant={active ? "active" : "inactive"}
         onClick={() => dispatch(payload)}
       />
     );
   };
+
+  const baseGroups = map.baseLayers.map((layer) => {
+    return controlButton(
+      layer,
+      {
+        type: "updateActiveBaseLayer",
+        payload: {
+          layer: layer,
+          // baseLayer: key as keyof typeof map.baseLayers,
+          // active: !layer.active,
+        },
+      },
+      map.activeBase.id === layer.id
+    );
+  });
 
   const controlGroups = Object.entries(map.dataLayers).map(
     ([key, dataLayer]) => {
@@ -33,14 +52,18 @@ const MapControl = () => {
           (layer) => (layer.control && !map.threeDimensions) || !layer.hideOn3d
         )
         .map((layer) => {
-          return controlButton(layer, {
-            type: "updateLayerActive",
-            payload: {
-              id: layer.id,
-              dataLayer: key as keyof typeof map.dataLayers,
-              active: !layer.active,
+          return controlButton(
+            layer,
+            {
+              type: "updateLayerActive",
+              payload: {
+                id: layer.id,
+                dataLayer: key as keyof typeof map.dataLayers,
+                active: !layer.active,
+              },
             },
-          });
+            layer.active
+          );
         });
 
       return <Fragment key={key}>{controls}</Fragment>;
@@ -52,6 +75,7 @@ const MapControl = () => {
         className={`w-screen flex-wrap sm:w-auto control-layer flex cursor-pointer relative transition-all duration-200 bg-slate-900/75 px-1 py-1 sm:rounded-lg text-white`}
       >
         <>
+          {baseGroups}
           {controlGroups}
           {map.threeDimensions && (
             <>
@@ -73,13 +97,17 @@ const MapControl = () => {
             </>
           )}
           {map.shaderLayers.map((layer) => {
-            return controlButton(layer, {
-              type: "updateShader",
-              payload: {
-                id: layer.id,
-                active: !layer.active,
+            return controlButton(
+              layer,
+              {
+                type: "updateShader",
+                payload: {
+                  id: layer.id,
+                  active: !layer.active,
+                },
               },
-            });
+              layer.active
+            );
           })}
           <ControlButton
             icon={"/icons/3d.svg"}

@@ -4,7 +4,7 @@ import { Layer as LayerType } from "@/reducers/mapReducer";
 export const createTileLayer = (layer: LayerType) => {
   return new TileLayer({
     id: layer.id,
-    visible: layer.active,
+    // visible: layer.active,
     data: layer.url,
     maxZoom: layer.meta.maxNativeZoom || layer.meta.maxZoom,
     minZoom: layer.meta.minNativeZoom || layer.meta.minZoom,

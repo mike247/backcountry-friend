@@ -16,22 +16,21 @@ import { CompassWidget, ZoomWidget } from "@deck.gl/widgets";
 import debounce from "lodash.debounce";
 import "@deck.gl/widgets/stylesheet.css";
 
-const generateData = (
-  baseMap: LayerType[],
+const layerFunction = (threeDimensions: boolean) =>
+  threeDimensions ? createTerrainLayer : createTileLayer;
+
+const generateBaseLayer = (baseMap: LayerType, threeDimensions: boolean) => {
+  return layerFunction(threeDimensions)(baseMap);
+};
+
+const generateDataLayers = (
   activeLayers: LayerType[],
   threeDimensions: boolean
 ) => {
-  const layerFunction = threeDimensions ? createTerrainLayer : createTileLayer;
-
-  const coreTiles = baseMap.map((layer) => {
-    return layerFunction(layer);
-  });
-
   const allLayers = [
-    ...coreTiles,
     ...activeLayers
       .filter((layer) => !threeDimensions || !layer.hideOn3d)
-      .map((layer) => layerFunction(layer)),
+      .map((layer) => layerFunction(threeDimensions)(layer)),
   ];
 
   return allLayers;
@@ -97,10 +96,12 @@ const MapComponent = () => {
     },
   });
 
+  const baseLayers = useMemo(() => {
+    return [generateBaseLayer(map.activeBase, map.threeDimensions)];
+  }, [map.activeBase, map.threeDimensions]);
+
   const dataLayers = useMemo(() => {
-    return [
-      ...generateData(map.baseMap, map.activeLayers, map.threeDimensions),
-    ];
+    return [...generateDataLayers(map.activeLayers, map.threeDimensions)];
   }, [map.baseMap, map.activeLayers, map.threeDimensions]);
 
   const shaderLayers = useMemo(() => {
@@ -110,6 +111,8 @@ const MapComponent = () => {
       map.threeDimensions
     );
   }, [map.activeShaders, map.shaderLayers, map.threeDimensions]);
+
+  console.log(baseLayers);
 
   return (
     <DeckGL
@@ -127,7 +130,7 @@ const MapComponent = () => {
         200
       )}
       effects={generateEffects(map)}
-      layers={[...dataLayers, ...shaderLayers]}
+      layers={[...baseLayers, ...dataLayers, ...shaderLayers]}
       widgets={[new ZoomWidget({}), new CompassWidget({})]}
     ></DeckGL>
   );
