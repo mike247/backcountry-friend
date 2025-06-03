@@ -19,6 +19,7 @@
     "@maptiler/client": "^2.3.2",
     "@turf/distance": "^7.2.0",
     "@types/react-map-gl": "^6.1.7",
+    "@vercel/analytics": "^1.5.0",
     "cesium": "^1.129.0",
     "deck.gl": "^9.1.12",
     "leaflet": "^1.9.4",

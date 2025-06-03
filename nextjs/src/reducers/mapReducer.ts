@@ -403,7 +403,7 @@ const shaderLayers: ShaderLayer[] = [
         hidden: true,
       },
       cutoffAngle: {
-        title: "Min angle",
+        title: "Angle",
         value: 0,
         legend: ["30", "34", "39", "45", "50"],
         min: 0,
