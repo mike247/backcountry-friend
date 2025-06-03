@@ -93,6 +93,7 @@ export type ShaderLayer = Layer & {
       legend?: string[];
       title: string;
       hidden: boolean;
+      legendOnly?: boolean;
     };
   };
 };
@@ -351,7 +352,7 @@ const shaderLayers: ShaderLayer[] = [
     id: "gpuAvalanche",
     title: "Avalance terrain",
     legend: {
-      gradient: ["#00ff63", "#ffce00", "#ff0900", "#000000"],
+      gradient: ["#ffce00", "#ff0900", "#000000", "#ff0900", "#ffce00"],
       minText: "0 degrees",
       midText: "45 Degrees",
       maxText: "90 degrees",
@@ -403,11 +404,12 @@ const shaderLayers: ShaderLayer[] = [
       },
       cutoffAngle: {
         title: "Min angle",
-        value: 20,
-        legend: ["0", "10", "20", "30", "40", "50", "60", "70", "80", "90"],
+        value: 0,
+        legend: ["30", "34", "39", "45", "50"],
         min: 0,
         max: 90,
-        hidden: true,
+        hidden: false,
+        legendOnly: true,
       },
     },
   },

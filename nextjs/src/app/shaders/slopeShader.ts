@@ -48,11 +48,11 @@ export const slopeModule = {
     } else if (t < 0.43) {
       float k = (t - 0.38) / 0.05;
       return mix(vec4(1.0, 0.0, 0.0, custom.opacity), vec4(0.0, 0.0, 0.0, custom.opacity), k); // red → black
-    } else if (t < 0.5) {
-      float k = (t - 0.43) / 0.07;
+    } else if (t < 0.49) {
+      float k = (t - 0.43) / 0.06;
       return mix(vec4(0.0, 0.0, 0.0, custom.opacity), vec4(1.0, 0.0, 0.0, custom.opacity), k); // black → red
-    } else if (t < 0.66) {
-      float k = (t - 0.5) / 0.16;
+    } else if (t < 0.55) {
+      float k = (t - 0.49) / 0.06;
       return mix(vec4(1.0, 0.0, 0.0, custom.opacity), vec4(1.0, 1.0, 0.0, custom.opacity), k); // red → yellow
     } else {
       return vec4(0.0, 0.0, 0.0, 0.0);

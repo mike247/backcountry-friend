@@ -138,6 +138,7 @@ const MapControl = () => {
                   <Slider
                     shader={shader.id}
                     slider={slider}
+                    legendOnly={value.legendOnly || false}
                     value={value.value}
                     legend={value.legend}
                     min={value.min}

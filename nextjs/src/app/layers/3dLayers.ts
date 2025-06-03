@@ -8,14 +8,9 @@ import { TerrainLayer } from "deck.gl";
 export const createTerrainLayer = (layer: LayerType) => {
   return new TerrainLayer({
     id: layer.id + "3d",
-    // visible: layer.active,
     minZoom: layer.meta.minNativeZoom || layer.meta.minZoom,
     maxZoom: layer.meta.maxNativeZoom || layer.meta.maxZoom,
     elevationDecoder: ELEVATION_DECODER,
-    // elevationData: maptilerUrlBuilder(
-    //   "01971055-af3c-776d-a91e-b7b117d2b300",
-    //   "png"
-    // ),
     elevationData: maptilerUrlBuilder("terrain-rgb-v2", "webp"),
     texture: layer.url,
     wireframe: false,

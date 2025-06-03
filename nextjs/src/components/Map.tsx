@@ -20,7 +20,6 @@ const layerFunction = (threeDimensions: boolean) =>
   threeDimensions ? createTerrainLayer : createTileLayer;
 
 const generateBaseLayer = (baseMap: LayerType, threeDimensions: boolean) => {
-  console.log(layerFunction(threeDimensions));
   return layerFunction(threeDimensions)(baseMap);
 };
 
@@ -114,8 +113,6 @@ const MapComponent = () => {
     );
   }, [map.activeShaders, map.shaderLayers, map.threeDimensions]);
 
-  // console.log(baseLayers);
-
   return (
     <DeckGL
       key={map.threeDimensions ? "deck-3d" : "deck-2d"} // force remount
@@ -132,12 +129,7 @@ const MapComponent = () => {
         200
       )}
       effects={generateEffects(map)}
-      layers={[
-        ...baseLayers,
-        // layerFunction(map.threeDimensions)(map.baseLayers[0]),
-        ...dataLayers,
-        ...shaderLayers,
-      ]}
+      layers={[...baseLayers, ...dataLayers, ...shaderLayers]}
       widgets={[new ZoomWidget({}), new CompassWidget({})]}
     ></DeckGL>
   );
