@@ -15,7 +15,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Backcountry friend",
+  title: "Backcountry maps",
   description: "Mapping and hazard awareness",
 };
 
