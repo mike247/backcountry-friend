@@ -20,6 +20,7 @@ const layerFunction = (threeDimensions: boolean) =>
   threeDimensions ? createTerrainLayer : createTileLayer;
 
 const generateBaseLayer = (baseMap: LayerType, threeDimensions: boolean) => {
+  console.log(layerFunction(threeDimensions));
   return layerFunction(threeDimensions)(baseMap);
 };
 
@@ -97,6 +98,7 @@ const MapComponent = () => {
   });
 
   const baseLayers = useMemo(() => {
+    console.log(map.activeBase);
     return [generateBaseLayer(map.activeBase, map.threeDimensions)];
   }, [map.activeBase, map.threeDimensions]);
 
@@ -112,7 +114,7 @@ const MapComponent = () => {
     );
   }, [map.activeShaders, map.shaderLayers, map.threeDimensions]);
 
-  console.log(baseLayers);
+  // console.log(baseLayers);
 
   return (
     <DeckGL
@@ -130,7 +132,12 @@ const MapComponent = () => {
         200
       )}
       effects={generateEffects(map)}
-      layers={[...baseLayers, ...dataLayers, ...shaderLayers]}
+      layers={[
+        ...baseLayers,
+        // layerFunction(map.threeDimensions)(map.baseLayers[0]),
+        ...dataLayers,
+        ...shaderLayers,
+      ]}
       widgets={[new ZoomWidget({}), new CompassWidget({})]}
     ></DeckGL>
   );

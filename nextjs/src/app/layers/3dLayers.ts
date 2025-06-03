@@ -8,7 +8,7 @@ import { TerrainLayer } from "deck.gl";
 export const createTerrainLayer = (layer: LayerType) => {
   return new TerrainLayer({
     id: layer.id + "3d",
-    visible: layer.active,
+    // visible: layer.active,
     minZoom: layer.meta.minNativeZoom || layer.meta.minZoom,
     maxZoom: layer.meta.maxNativeZoom || layer.meta.maxZoom,
     elevationDecoder: ELEVATION_DECODER,
