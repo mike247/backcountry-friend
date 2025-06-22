@@ -1,4 +1,4 @@
-import { maptilerUrlBuilder } from "@/reducers/mapReducer";
+import { maptilerUrlBuilder } from "@/reducers/utils";
 import { PathLayer, TileLayer } from "deck.gl";
 
 const TileDebugLayer = new TileLayer({

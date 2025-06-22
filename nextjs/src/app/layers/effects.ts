@@ -1,4 +1,4 @@
-import { MapConfig } from "@/reducers/mapReducer";
+import { MapConfig } from "@/reducers/state";
 import { LightingEffect, _SunLight as SunLight } from "@deck.gl/core";
 
 export const generateEffects = (map: MapConfig) => {

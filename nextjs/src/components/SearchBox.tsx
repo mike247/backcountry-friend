@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { GeocodingFeature } from "@maptiler/client";
 import Image from "next/image";
-import { useMapContext } from "../reducers/mapReducer";
+import { useMapContext } from "../reducers/context";
 
 const SearchResults = ({
   features,

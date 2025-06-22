@@ -2,7 +2,10 @@ import { _TerrainExtension as TerrainExtension } from "@deck.gl/extensions";
 import { TileLayer } from "deck.gl";
 import { slopeModule } from "../shaders/slopeShader";
 import { CustomBitmapLayer } from "./customBitmapLayer";
-import { GL } from "@luma.gl/constants";
+import { Texture } from "@luma.gl/core";
+import { COORDINATE_SYSTEM } from "@deck.gl/core";
+import { lngLatToWorld } from "@math.gl/web-mercator";
+import { AvalancheUniformProps } from "../shaders/uniforms";
 
 function getMetersPerPixel(
   latitude: number,
@@ -29,6 +32,9 @@ export const shaderTilelayer = ({
   shaderProps,
   data,
   visible,
+  texture = null,
+  maskBounds = null,
+  avalancheUniforms,
 }: {
   id: string;
   threeDimensions: boolean;
@@ -38,6 +44,9 @@ export const shaderTilelayer = ({
   data: string;
   shaderProps: { [key: string]: number };
   visible: boolean;
+  maskBounds?: [number, number, number, number] | null;
+  texture?: null | Texture;
+  avalancheUniforms?: AvalancheUniformProps | undefined;
 }) => {
   return new TileLayer({
     id: id + threeDimensions,
@@ -46,12 +55,6 @@ export const shaderTilelayer = ({
     maxZoom,
     opacity: 1,
     tileSize: 512,
-    parameters: {
-      minFilter: GL.NEAREST,
-      magFilter: GL.NEAREST,
-      wrapS: GL.CLAMP_TO_EDGE,
-      wrapT: GL.CLAMP_TO_EDGE,
-    },
     color: [256, 256, 256],
     visible,
     extensions: threeDimensions ? [new TerrainExtension()] : [],
@@ -63,8 +66,23 @@ export const shaderTilelayer = ({
       const [[, minLat], [, maxLat]] = bb;
       const centerLat = (minLat + maxLat) / 2;
       const metersPerPixel = getMetersPerPixel(centerLat, tile.zoom); // rough, assumes near equator
+
+      const tileBounds: [number, number, number, number] = [
+        ...lngLatToWorld(bb[0]),
+        ...lngLatToWorld(bb[1]),
+      ];
+      if (maskBounds) {
+        const intersects =
+          tileBounds[0] < maskBounds[2] &&
+          tileBounds[2] > maskBounds[0] &&
+          tileBounds[1] < maskBounds[3] &&
+          tileBounds[3] > maskBounds[1];
+        if (!intersects) return null;
+      }
+
       return new CustomBitmapLayer({
         id,
+        _imageCoordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
         image: data,
         extensions: threeDimensions ? [new TerrainExtension()] : [],
         customUniforms: {
@@ -73,7 +91,11 @@ export const shaderTilelayer = ({
           opacity: shaderProps.opacity,
           cutoffElevation: shaderProps.cutoffElevation,
           cutoffAngle: shaderProps.cutoffAngle,
+          tileBounds,
+          maskBounds: maskBounds ? maskBounds : [0, 0, 0, 0],
         },
+        avalancheUniforms,
+        texture,
         bounds: [bb[0][0], bb[0][1], bb[1][0], bb[1][1]],
         module: slopeModule,
         shader: shader(shaderProps),

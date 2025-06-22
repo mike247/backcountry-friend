@@ -1,13 +1,10 @@
 import { Fragment } from "react";
 import ControlButton from "./ControlButton";
-import {
-  Action,
-  Layer,
-  ShaderLayer,
-  useMapContext,
-} from "../reducers/mapReducer";
+import { Layer, ShaderLayer } from "../reducers/state";
 import Slider from "./Slider";
 import TimeSlider from "./TimeSlider";
+import { Action } from "@/reducers/actions";
+import { useMapContext } from "@/reducers/context";
 
 const MapControl = () => {
   const { map, dispatch } = useMapContext();
@@ -110,6 +107,21 @@ const MapControl = () => {
             );
           })}
           <ControlButton
+            icon={map.avalancheLayer.control?.icon || ""}
+            alt="toggle avalanche forecast"
+            title="Forecast"
+            label="Forecast"
+            variant={map.avalancheLayer.active ? "active" : "inactive"}
+            onClick={() => {
+              dispatch({
+                type: "toggleAvalancheLayer",
+                payload: {
+                  active: !map.avalancheLayer.active,
+                },
+              });
+            }}
+          />
+          <ControlButton
             icon={"/icons/3d.svg"}
             alt="toggle 3d"
             title="3d"
@@ -145,11 +157,38 @@ const MapControl = () => {
                     max={value.max}
                     title={value.title}
                     gradient={shader.legend ? shader.legend.gradient : null}
+                    blocks={value.blocks}
                   />
                 </div>
               );
             });
         })}
+
+      {map.avalancheLayer.active &&
+        Object.entries(map.avalancheLayer.sliders)
+          .filter(([, value]) => !value.hidden)
+          .map(([slider, value]) => {
+            return (
+              <div className="w-full" key={slider + map.avalancheLayer.id}>
+                <Slider
+                  shader={map.avalancheLayer.id}
+                  slider={slider}
+                  legendOnly={value.legendOnly || false}
+                  value={value.value}
+                  legend={value.legend}
+                  min={value.min}
+                  max={value.max}
+                  title={value.title}
+                  gradient={
+                    map.avalancheLayer.legend
+                      ? map.avalancheLayer.legend.gradient
+                      : null
+                  }
+                  blocks={value.blocks}
+                />
+              </div>
+            );
+          })}
 
       {map.effectsState.sun.active && (
         <div className="w-full">

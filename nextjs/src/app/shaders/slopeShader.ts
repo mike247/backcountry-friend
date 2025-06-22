@@ -4,8 +4,14 @@ export const slopeModule = {
   precision highp float;
 
   float decodeElevation(vec3 rgb) {
-    vec3 color = rgb * 256.0;
+    vec3 color = rgb * 255.0;
     return -10000.0 + ((color.r * 256.0 * 256.0 + color.g * 256.0 + color.b) * 0.1);
+  }
+  
+  float computeAspect(float zx, float zy) {
+    float a = atan(zx, zy);
+    a = degrees(a) * -1.0;
+    return (a < 0.0 ? 360.0 + a : a);
   }
 
   float calculateSlope(float elevationX, float elevationY, vec2 pixelSize) {

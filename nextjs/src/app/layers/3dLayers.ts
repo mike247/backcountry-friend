@@ -1,8 +1,5 @@
-import {
-  maptilerUrlBuilder,
-  Layer as LayerType,
-  ELEVATION_DECODER,
-} from "@/reducers/mapReducer";
+import { Layer as LayerType } from "@/reducers/state";
+import { ELEVATION_DECODER, maptilerUrlBuilder } from "@/reducers/utils";
 import { TerrainLayer } from "deck.gl";
 
 export const createTerrainLayer = (layer: LayerType) => {

@@ -1,26 +1,22 @@
 import "maplibre-gl/dist/maplibre-gl.css";
-import {
-  Layer as LayerType,
-  ShaderLayer,
-  useMapContext,
-} from "@/reducers/mapReducer";
-import { MapView } from "deck.gl";
+import { Layer as LayerType, ShaderLayer } from "@/reducers/state";
+import { Layer, MapView, TerrainLayer } from "deck.gl";
 import { createTileLayer } from "../app/layers/2dLayers";
-import { createTerrainLayer } from "../app/layers/3dLayers";
 import { generateEffects } from "../app/layers/effects";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { shaderTilelayer } from "../app/layers/shaderTileLayer";
 import shaderLookup from "../app/shaders/shaderLookup";
-import { DeckGL } from "@deck.gl/react";
+import { DeckGL, DeckGLRef } from "@deck.gl/react";
 import { CompassWidget, ZoomWidget } from "@deck.gl/widgets";
 import debounce from "lodash.debounce";
 import "@deck.gl/widgets/stylesheet.css";
-
-const layerFunction = (threeDimensions: boolean) =>
-  threeDimensions ? createTerrainLayer : createTileLayer;
+import { Device } from "@luma.gl/core";
+import { useMapContext } from "@/reducers/context";
+import generateAvalancheLayers from "@/app/layers/avalancheLayers";
+import { ELEVATION_DECODER, maptilerUrlBuilder } from "@/reducers/utils";
 
 const generateBaseLayer = (baseMap: LayerType, threeDimensions: boolean) => {
-  return layerFunction(threeDimensions)(baseMap);
+  return createTileLayer(baseMap, threeDimensions);
 };
 
 const generateDataLayers = (
@@ -30,7 +26,7 @@ const generateDataLayers = (
   const allLayers = [
     ...activeLayers
       .filter((layer) => !threeDimensions || !layer.hideOn3d)
-      .map((layer) => layerFunction(threeDimensions)(layer)),
+      .map((layer) => createTileLayer(layer, threeDimensions)),
   ];
 
   return allLayers;
@@ -64,6 +60,9 @@ const generateShaderLayers = (
 
 const MapComponent = () => {
   const { map, dispatch } = useMapContext();
+  const deckRef = useRef<DeckGLRef<MapView>>(null);
+  const [deckDevice, setDeckDevice] = useState<Device | null>(null);
+  const [avalancheLayers, setAvalancheLayers] = useState<Layer[]>([]);
   const [viewState, setViewState] = useState(map.viewState); // stable component state
   const latestViewState = useRef(map.viewState); // track all updates
 
@@ -86,6 +85,22 @@ const MapComponent = () => {
     },
   });
 
+  useEffect(() => {
+    if (deckDevice) {
+      const layers = async () => {
+        const data = await generateAvalancheLayers({
+          threeDimensions: map.threeDimensions,
+          device: deckDevice,
+          avalancheLayer: map.avalancheLayer,
+          forecast: map.forecast,
+        });
+
+        setAvalancheLayers(data);
+      };
+      layers();
+    }
+  }, [map.threeDimensions, deckDevice, map.avalancheLayer, map.forecast]);
+
   const threedController = new MapView({
     controller: {
       doubleClickZoom: true,
@@ -97,13 +112,12 @@ const MapComponent = () => {
   });
 
   const baseLayers = useMemo(() => {
-    console.log(map.activeBase);
     return [generateBaseLayer(map.activeBase, map.threeDimensions)];
   }, [map.activeBase, map.threeDimensions]);
 
   const dataLayers = useMemo(() => {
     return [...generateDataLayers(map.activeLayers, map.threeDimensions)];
-  }, [map.baseMap, map.activeLayers, map.threeDimensions]);
+  }, [map.activeLayers, map.threeDimensions]);
 
   const shaderLayers = useMemo(() => {
     return generateShaderLayers(
@@ -113,10 +127,25 @@ const MapComponent = () => {
     );
   }, [map.activeShaders, map.shaderLayers, map.threeDimensions]);
 
+  const terrainLayer = new TerrainLayer({
+    id: "3d",
+    minZoom: map.meta.minZoom,
+    maxZoom: map.meta.maxZoom,
+    elevationDecoder: ELEVATION_DECODER,
+    elevationData: maptilerUrlBuilder("terrain-rgb-v2", "webp"),
+    wireframe: false,
+    opacity: 1,
+    operation: "terrain+draw",
+    pickable: false,
+    color: [255, 255, 255],
+  });
+
   return (
     <DeckGL
       key={map.threeDimensions ? "deck-3d" : "deck-2d"} // force remount
-      id="twoDimensions"
+      ref={deckRef}
+      id="deckGl"
+      onDeviceInitialized={(device) => setDeckDevice(device)}
       initialViewState={
         map.threeDimensions // Dimension specific view conditions
           ? { ...viewState, maxPitch: 80, pitch: 45 }
@@ -129,7 +158,13 @@ const MapComponent = () => {
         200
       )}
       effects={generateEffects(map)}
-      layers={[...baseLayers, ...dataLayers, ...shaderLayers]}
+      layers={[
+        ...(map.threeDimensions ? [terrainLayer] : []),
+        ...baseLayers,
+        ...dataLayers,
+        ...shaderLayers,
+        ...(map.avalancheLayer.active ? avalancheLayers : []),
+      ]}
       widgets={[new ZoomWidget({}), new CompassWidget({})]}
     ></DeckGL>
   );

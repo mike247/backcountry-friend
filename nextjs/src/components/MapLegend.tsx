@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { useMapContext } from "../reducers/mapReducer";
+import { useMapContext } from "../reducers/context";
 
 const Gradient = ({ gradient }: { gradient: string[] }) => {
   const linearGradient = gradient.join(",");

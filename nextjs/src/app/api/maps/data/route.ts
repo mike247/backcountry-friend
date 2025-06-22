@@ -11,10 +11,6 @@ export async function GET(request: NextRequest) {
     process.env.MAPTILER_API_KEY
   }`;
 
-  if (searchParams.get("layerId") === "terrain-rgb-v2")
-    console.log("OH HELL NO");
-
-  console.log(url);
   const response = await fetch(url);
   return response;
 }

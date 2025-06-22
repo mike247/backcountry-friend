@@ -1,35 +1,58 @@
 import { ShaderModule } from "@luma.gl/shadertools";
-import { customUniformModule, CustomUniformProps } from "../shaders/uniforms";
+import {
+  avalanceUniformModule,
+  AvalancheUniformProps,
+  customUniformModule,
+  CustomUniformProps,
+} from "../shaders/uniforms";
 import { BitmapLayer, BitmapLayerProps } from "@deck.gl/layers";
+import { Texture } from "@luma.gl/core";
 
 interface CustomBitmapLayerProps extends BitmapLayerProps {
-  customUniforms: {
-    pixelSize: [number, number];
-    textureSize: [number, number];
-    opacity: number;
-    cutoffElevation: number;
-    cutoffAngle: number;
-  };
-
+  customUniforms: CustomUniformProps;
+  avalancheUniforms: AvalancheUniformProps | undefined;
+  texture: Texture | null;
   module: ShaderModule;
   shader: string;
 }
 
+export const maskTextureModule: ShaderModule = {
+  name: "texture",
+  vs: "sampler2D maskTexture;",
+  fs: "sampler2D maskTexture;",
+  dependencies: [],
+};
+
 export class CustomBitmapLayer extends BitmapLayer<CustomBitmapLayerProps> {
+  static componentName = "CustomBitmapLayer";
+
   draw(opts: unknown) {
     const { model } = this.state;
+    const uniforms = this.props.customUniforms;
     if (model) {
       const customUniformProps: CustomUniformProps = {
-        pixelSize: this.props.customUniforms.pixelSize,
-        textureSize: this.props.customUniforms.textureSize,
-        opacity: this.props.customUniforms.opacity,
-        cutoffElevation: this.props.customUniforms.cutoffElevation,
-        cutoffAngle: this.props.customUniforms.cutoffAngle,
+        pixelSize: uniforms.pixelSize,
+        textureSize: uniforms.textureSize,
+        opacity: uniforms.opacity,
+        cutoffElevation: uniforms.cutoffElevation,
+        cutoffAngle: uniforms.cutoffAngle,
+        tileBounds: uniforms.tileBounds,
+        maskBounds: uniforms.maskBounds,
       };
 
-      model.shaderInputs.setProps({
+      const props = {
         custom: customUniformProps,
-      });
+        avalanche: this.props.avalancheUniforms,
+      };
+
+      model.shaderInputs.setProps(props);
+
+      if (this.props.texture) {
+        model.setBindings({
+          maskTexture: this.props.texture,
+        });
+      }
+
       super.draw(opts);
     }
   }
@@ -45,6 +68,8 @@ export class CustomBitmapLayer extends BitmapLayer<CustomBitmapLayerProps> {
       modules: [
         ...(shaders.modules || []),
         customUniformModule,
+        avalanceUniformModule,
+        // maskTextureModule,
         this.props.module,
       ],
       fs: this.props.shader,

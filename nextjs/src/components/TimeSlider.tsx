@@ -1,4 +1,4 @@
-import { useMapContext } from "@/reducers/mapReducer";
+import { useMapContext } from "@/reducers/context";
 
 const TimeSlider = () => {
   const { map, dispatch } = useMapContext();
