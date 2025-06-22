@@ -24,8 +24,6 @@ export const maskTextureModule: ShaderModule = {
 };
 
 export class CustomBitmapLayer extends BitmapLayer<CustomBitmapLayerProps> {
-  static componentName = "CustomBitmapLayer";
-
   draw(opts: unknown) {
     const { model } = this.state;
     const uniforms = this.props.customUniforms;
