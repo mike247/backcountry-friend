@@ -44,11 +44,10 @@ const Slider = ({
     linearGradient = gradient.join(",");
   }
   return (
-    <div className="aboveMap bg-slate-900/75 sm:rounded-lg my-1 p-2 flex-col justify-center text-white">
-      <label htmlFor={title}>{title}</label>
+    <div className="aboveMap bg-slate-900/75 sm:rounded-lg mb-1 sm:mb-0 sm:mt-1 p-1 flex-col justify-center text-white">
       {legendOnly ? (
         <div
-          className="w-full my-2 h-2 bg-gray-900 rounded-lg appearance-none dark:bg-gray-200"
+          className="w-full my-1 h-2 bg-gray-900 rounded-lg appearance-none dark:bg-gray-200"
           style={{
             backgroundImage: gradient
               ? `linear-gradient(to right, ${linearGradient})`
@@ -79,7 +78,6 @@ const Slider = ({
           className="w-full h-2 bg-gray-900 rounded-lg appearance-none cursor-pointer dark:bg-gray-200"
         />
       )}
-
       {legend && (
         <div
           className={`${
@@ -87,7 +85,9 @@ const Slider = ({
           } flex-grow`}
         >
           {legend.map((value: string) => (
-            <span key={value}>{value}</span>
+            <span key={value} className="text-xs">
+              {value}
+            </span>
           ))}
         </div>
       )}

@@ -396,7 +396,7 @@ export const avalancheLayer: AvalancheLayer = {
     title: "Avalanche forecast",
     label: "Forecast",
   },
-  active: false,
+  active: true,
   url: maptilerUrlBuilder("terrain-rgb-v2", "webp"),
   // url: maptilerUrlBuilder("01971bf1-fd00-70c5-a202-70f8ee2dc5aa", "png"),
   meta: {
@@ -510,7 +510,18 @@ export const shaderLayers: ShaderLayer[] = [
       cutoffAngle: {
         title: "Min angle",
         value: 20,
-        legend: ["0", "10", "20", "30", "40", "50", "60", "70", "80", "90"],
+        legend: [
+          "0°",
+          "10°",
+          "20°",
+          "30°",
+          "40°",
+          "50°",
+          "60°",
+          "70°",
+          "80°",
+          "90°",
+        ],
         min: 0,
         max: 90,
         hidden: false,
@@ -572,7 +583,7 @@ export const shaderLayers: ShaderLayer[] = [
       cutoffAngle: {
         title: "Angle",
         value: 0,
-        legend: ["30", "34", "39", "45", "50"],
+        legend: ["30°", "34°", "39°", "45°", "50°"],
         min: 0,
         max: 90,
         hidden: false,

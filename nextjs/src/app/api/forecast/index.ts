@@ -31,7 +31,7 @@ type forecast = {
 export const getForecast = async () => {
   const url = "https://www.avalanche.net.nz/api/forecast";
 
-  const response = await fetch(url, { next: { revalidate: 60 } });
+  const response = await fetch(url, { next: { revalidate: 3600 } });
 
   const { forecasts } = await response.json();
   const validForecasts = forecasts.reduce(

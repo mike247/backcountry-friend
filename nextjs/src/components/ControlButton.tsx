@@ -26,8 +26,8 @@ const ControlButton = ({
       } px-2 py-1 flex flex-col flex-grow justify-center items-center rounded-md m-1`}
       onClick={onClick}
     >
-      <Image src={icon} alt={alt} width={30} height={30} title={title} />
-      <label className="text-sm">{label}</label>
+      <Image src={icon} alt={alt} width={20} height={20} title={title} />
+      <label className="text-xs">{label}</label>
     </button>
   );
 };

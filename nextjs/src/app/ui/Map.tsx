@@ -1,5 +1,5 @@
 "use client";
-import NavBar from "../../components/NavBar.tsx";
+// import NavBar from "../../components/NavBar.tsx";
 import MapControl from "../../components/MapControl.tsx";
 // import MapLegend from "../components/MapLegend.tsx";
 import dynamic from "next/dynamic";
@@ -19,7 +19,7 @@ export default function Map({ forecast }: { forecast: Forecast[] }) {
   return (
     <MapContext.Provider value={{ map, dispatch }}>
       <div className="flex flex-col h-screen">
-        <NavBar />
+        {/* <NavBar /> */}
         <div className="flex-grow">
           <DynamicMap />
           <MapControl />

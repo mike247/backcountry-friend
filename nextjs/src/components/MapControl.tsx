@@ -67,7 +67,7 @@ const MapControl = () => {
     }
   );
   return (
-    <div className="fixed flex bottom-0 sm:bottom-auto sm:top-12 sm:right-0 sm:absolute above-map sm:m-2 cursor-pointer sm:flex-col flex-col-reverse items-center">
+    <div className="fixed flex bottom-0 sm:bottom-auto sm:right-0 sm:absolute above-map sm:m-2 cursor-pointer sm:flex-col flex-col-reverse items-center">
       <div
         className={`w-screen flex-wrap sm:w-auto control-layer flex cursor-pointer relative transition-all duration-200 bg-slate-900/75 px-1 py-1 sm:rounded-lg text-white`}
       >
