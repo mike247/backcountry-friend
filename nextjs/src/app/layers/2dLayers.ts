@@ -4,7 +4,7 @@ import { _TerrainExtension as TerrainExtension } from "@deck.gl/extensions";
 
 export const createTileLayer = (layer: LayerType, threeDimensions: boolean) => {
   return new TileLayer({
-    id: layer.id,
+    id: layer.id + threeDimensions,
     data: layer.url,
     maxZoom: layer.meta.maxNativeZoom || layer.meta.maxZoom,
     minZoom: layer.meta.minNativeZoom || layer.meta.minZoom,

@@ -595,8 +595,8 @@ export const shaderLayers: ShaderLayer[] = [
 
 export type UserData = {
   position: {
-    latitude: number | null;
-    longitude: number | null;
+    latitude: number;
+    longitude: number;
   };
 };
 

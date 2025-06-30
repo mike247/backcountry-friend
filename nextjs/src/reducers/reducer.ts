@@ -108,7 +108,6 @@ export const mapReducer = (map: MapConfig, action: Action) => {
       };
     }
     case "updateUserPosition": {
-      console.log(action.payload);
       return {
         ...map,
         user: {

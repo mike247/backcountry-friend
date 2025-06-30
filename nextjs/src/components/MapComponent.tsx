@@ -1,6 +1,6 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Layer as LayerType, ShaderLayer } from "@/reducers/state";
-import { IconLayer, Layer, MapView, TerrainLayer } from "deck.gl";
+import { Layer, MapView, TerrainLayer } from "deck.gl";
 import { createTileLayer } from "../app/layers/2dLayers";
 import { generateEffects } from "../app/layers/effects";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -15,6 +15,7 @@ import { useMapContext } from "@/reducers/context";
 import generateAvalancheLayers from "@/app/layers/avalancheLayers";
 import { ELEVATION_DECODER, maptilerUrlBuilder } from "@/reducers/utils";
 import LocateMeWidget from "./LocateMeWidget";
+import UserLayer from "@/app/layers/UserLayer";
 
 const generateBaseLayer = (baseMap: LayerType, threeDimensions: boolean) => {
   return createTileLayer(baseMap, threeDimensions);
@@ -169,27 +170,6 @@ const MapComponent = () => {
     color: [255, 255, 255],
   });
 
-  console.log([
-    map.user.position.longitude || 0,
-    map.user.position.latitude || 0,
-  ]);
-  const userLocation = new IconLayer({
-    id: "user-icon",
-    data: [map.user.position],
-    getIcon: () => ({
-      url: "/icons/user.svg", // public folder
-      width: 128,
-      height: 128,
-      anchorY: 128,
-    }),
-    getPosition: (d) => {
-      return [d.longitude, d.latitude];
-    },
-    sizeScale: 1,
-    getSize: () => 30,
-    getColor: [255, 0, 0],
-  });
-
   return (
     <DeckGL
       key="deck-map"
@@ -214,7 +194,10 @@ const MapComponent = () => {
         ...dataLayers,
         ...shaderLayers,
         ...(map.avalancheLayer.active ? avalancheLayers : []),
-        userLocation,
+        UserLayer({
+          lng: map.user.position.longitude,
+          lat: map.user.position.latitude,
+        }),
       ]}
       widgets={[
         new ZoomWidget({}),
@@ -223,7 +206,6 @@ const MapComponent = () => {
       ]}
     ></DeckGL>
   );
-  // return <>{map.threeDimensions ? experimentalMap : baseMap}</>;
 };
 
 export default MapComponent;
