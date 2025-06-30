@@ -30,6 +30,10 @@ export type Action =
       };
     }
   | { type: "updateShader"; payload: { id: string; active: boolean } }
+  | {
+      type: "updateUserPosition";
+      payload: { latitude: number; longitude: number };
+    }
   | { type: "updateViewState"; payload: { viewState: MapViewState } }
   | { type: "toggleSun"; payload: { active: boolean } }
   | { type: "updateActiveBaseLayer"; payload: { layer: Layer } }

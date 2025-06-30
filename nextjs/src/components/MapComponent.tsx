@@ -1,6 +1,6 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Layer as LayerType, ShaderLayer } from "@/reducers/state";
-import { Layer, MapView, TerrainLayer } from "deck.gl";
+import { IconLayer, Layer, MapView, TerrainLayer } from "deck.gl";
 import { createTileLayer } from "../app/layers/2dLayers";
 import { generateEffects } from "../app/layers/effects";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -70,6 +70,34 @@ const MapComponent = () => {
   useEffect(() => {
     latestViewState.current = map.viewState;
   }, [map.viewState]);
+
+  // useEffect(() => {
+  //   function updateUserPosition() {
+  //     if (navigator.geolocation) {
+  //       navigator.geolocation.getCurrentPosition((pos) => {
+  //         dispatch({
+  //           type: "updateUserPosition",
+  //           payload: {
+  //             latitude: pos.coords.latitude,
+  //             longitude: pos.coords.longitude,
+  //           },
+  //         });
+  //         // Optionally send to backend here
+  //         // fetch('/api/location', { method: 'POST', body: JSON.stringify({ lat, lng }) })
+  //       });
+  //     } else {
+  //       // Do something useful
+  //     }
+  //   }
+
+  //   // Run once on mount
+  //   updateUserPosition();
+  //   // Then set interval
+  //   const intervalId = setInterval(updateUserPosition, 60 * 1000);
+
+  //   // Cleanup on unmount
+  //   return () => clearInterval(intervalId);
+  // }, [dispatch]);
 
   // Only update `viewState` when 3D mode changes
   useEffect(() => {
@@ -141,6 +169,27 @@ const MapComponent = () => {
     color: [255, 255, 255],
   });
 
+  console.log([
+    map.user.position.longitude || 0,
+    map.user.position.latitude || 0,
+  ]);
+  const userLocation = new IconLayer({
+    id: "user-icon",
+    data: [map.user.position],
+    getIcon: () => ({
+      url: "/icons/user.svg", // public folder
+      width: 128,
+      height: 128,
+      anchorY: 128,
+    }),
+    getPosition: (d) => {
+      return [d.longitude, d.latitude];
+    },
+    sizeScale: 1,
+    getSize: () => 30,
+    getColor: [255, 0, 0],
+  });
+
   return (
     <DeckGL
       key={map.threeDimensions ? "deck-3d" : "deck-2d"} // force remount
@@ -165,11 +214,12 @@ const MapComponent = () => {
         ...dataLayers,
         ...shaderLayers,
         ...(map.avalancheLayer.active ? avalancheLayers : []),
+        userLocation,
       ]}
       widgets={[
         new ZoomWidget({}),
         new CompassWidget({}),
-        new LocateMeWidget({}),
+        new LocateMeWidget({ dispatch: dispatch }),
       ]}
     ></DeckGL>
   );

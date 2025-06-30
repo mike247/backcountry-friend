@@ -107,6 +107,20 @@ export const mapReducer = (map: MapConfig, action: Action) => {
         },
       };
     }
+    case "updateUserPosition": {
+      console.log(action.payload);
+      return {
+        ...map,
+        user: {
+          ...map.user,
+          position: {
+            ...map.user.position,
+            latitude: action.payload.latitude,
+            longitude: action.payload.longitude,
+          },
+        },
+      };
+    }
     case "updateViewState": {
       return {
         ...map,

@@ -593,6 +593,13 @@ export const shaderLayers: ShaderLayer[] = [
   },
 ];
 
+export type UserData = {
+  position: {
+    latitude: number | null;
+    longitude: number | null;
+  };
+};
+
 export type MapConfig = {
   meta: {
     center: LatLngTuple;
@@ -623,6 +630,7 @@ export type MapConfig = {
     center: LatLngTuple | null;
     zoom: number;
   };
+  user: UserData;
   baseMap: Layer;
   baseLayers: Layer[];
   dataLayers: {
@@ -641,6 +649,12 @@ export const initialMap: MapConfig = {
   activeBase: topoLayers.layers[0],
   activeShaders: [],
   threeDimensions: false,
+  user: {
+    position: {
+      latitude: -90,
+      longitude: 0,
+    },
+  },
   effectsState: {
     sun: {
       active: false,

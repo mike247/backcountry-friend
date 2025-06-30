@@ -1,9 +1,12 @@
 import type { Deck, Viewport, Widget } from "deck.gl";
 import LocateMe from "./LocateMe";
 import { createRoot, Root } from "react-dom/client";
+import { Action } from "@/reducers/actions";
+import { ActionDispatch } from "react";
 
 type LocateWidgetProps = {
   size?: number;
+  dispatch: ActionDispatch<[action: Action]>;
 };
 
 class LocateWidget implements Widget<LocateWidgetProps> {
@@ -18,7 +21,6 @@ class LocateWidget implements Widget<LocateWidgetProps> {
   constructor(props: LocateWidgetProps) {
     this.id = "locate-widget";
     this.props = props;
-    this.viewId = this.viewId;
   }
 
   //   onViewportChange(viewport: Viewport) {
@@ -80,6 +82,13 @@ class LocateWidget implements Widget<LocateWidgetProps> {
           longitude: position.coords.longitude,
         };
 
+        this.props.dispatch({
+          type: "updateUserPosition",
+          payload: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          },
+        });
         // @ts-expect-error Using private method temporary until there's a public one
         this.deck._onViewStateChange({
           viewId: viewport.id,
@@ -88,7 +97,7 @@ class LocateWidget implements Widget<LocateWidgetProps> {
         });
       });
     } else {
-      // do something usefull
+      // do something useful
     }
   }
 }
