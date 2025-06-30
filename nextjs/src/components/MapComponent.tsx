@@ -14,6 +14,7 @@ import { Device } from "@luma.gl/core";
 import { useMapContext } from "@/reducers/context";
 import generateAvalancheLayers from "@/app/layers/avalancheLayers";
 import { ELEVATION_DECODER, maptilerUrlBuilder } from "@/reducers/utils";
+import LocateMeWidget from "./LocateMeWidget";
 
 const generateBaseLayer = (baseMap: LayerType, threeDimensions: boolean) => {
   return createTileLayer(baseMap, threeDimensions);
@@ -165,7 +166,11 @@ const MapComponent = () => {
         ...shaderLayers,
         ...(map.avalancheLayer.active ? avalancheLayers : []),
       ]}
-      widgets={[new ZoomWidget({}), new CompassWidget({})]}
+      widgets={[
+        new ZoomWidget({}),
+        new CompassWidget({}),
+        new LocateMeWidget({}),
+      ]}
     ></DeckGL>
   );
   // return <>{map.threeDimensions ? experimentalMap : baseMap}</>;

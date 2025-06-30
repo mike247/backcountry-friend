@@ -9,10 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@deck.gl/aggregation-layers": "^9.1.12",
-    "@deck.gl/core": "^9.1.12",
-    "@deck.gl/layers": "^9.1.12",
-    "@deck.gl/widgets": "^9.1.12",
     "@loaders.gl/core": "^4.3.3",
     "@loaders.gl/geotiff": "^4.3.3",
     "@luma.gl/constants": "^9.1.9",

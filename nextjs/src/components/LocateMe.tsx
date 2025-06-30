@@ -1,17 +1,15 @@
 import Image from "next/image";
-import { useMap } from "react-leaflet";
 
-const LocateMe = () => {
-  const map = useMap();
+const LocateMe = ({ onClick }: { onClick: () => void }) => {
   return (
-    <div className="absolute top-2 sm:top-20 left-2 above-map">
+    <div className="m-[12px] cursor-pointer">
       <Image
         src="/icons/gps.svg"
         alt="Locate me"
-        height="35"
-        width="35"
-        onClick={() => map.locate({ setView: true, maxZoom: 14 })}
-        className="hover:scale-150 duration-200"
+        height="27"
+        width="27"
+        onClick={onClick}
+        // className="hover:scale-150 duration-200"
       />
     </div>
   );

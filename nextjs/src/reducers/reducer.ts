@@ -110,7 +110,10 @@ export const mapReducer = (map: MapConfig, action: Action) => {
     case "updateViewState": {
       return {
         ...map,
-        viewState: action.payload.viewState,
+        viewState: {
+          ...map.viewState,
+          ...action.payload.viewState,
+        },
       };
     }
     case "updateSlider": {
