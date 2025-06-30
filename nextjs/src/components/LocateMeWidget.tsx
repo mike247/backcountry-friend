@@ -72,30 +72,34 @@ class LocateWidget implements Widget<LocateWidgetProps> {
 
   private locateMe(viewport: Viewport) {
     if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const nextViewState = {
-          ...viewport,
-          zoom: 13,
-          pitch: 0,
-          bearing: 0,
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        };
-
-        this.props.dispatch({
-          type: "updateUserPosition",
-          payload: {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const nextViewState = {
+            ...viewport,
+            zoom: 13,
+            pitch: 0,
+            bearing: 0,
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-          },
-        });
-        // @ts-expect-error Using private method temporary until there's a public one
-        this.deck._onViewStateChange({
-          viewId: viewport.id,
-          viewState: nextViewState,
-          interactionState: {},
-        });
-      });
+          };
+
+          this.props.dispatch({
+            type: "updateUserPosition",
+            payload: {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            },
+          });
+          // @ts-expect-error Using private method temporary until there's a public one
+          this.deck._onViewStateChange({
+            viewId: viewport.id,
+            viewState: nextViewState,
+            interactionState: {},
+          });
+        },
+        () => {},
+        { maximumAge: 60 * 1000 }
+      );
     } else {
       // do something useful
     }
