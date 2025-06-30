@@ -192,7 +192,7 @@ const MapComponent = () => {
 
   return (
     <DeckGL
-      key={map.threeDimensions ? "deck-3d" : "deck-2d"} // force remount
+      key="deck-map"
       ref={deckRef}
       id="deckGl"
       onDeviceInitialized={(device) => setDeckDevice(device)}
