@@ -532,7 +532,7 @@ export const shaderLayers: ShaderLayer[] = [
     id: "gpuAvalanche",
     title: "Avalance terrain",
     legend: {
-      gradient: ["#ffce00", "#ff0900", "#000000", "#ff0900", "#ffce00"],
+      gradient: ["#ffce00", "#ff0900", "#ffce00"],
       minText: "0 degrees",
       midText: "45 Degrees",
       maxText: "90 degrees",
@@ -553,7 +553,7 @@ export const shaderLayers: ShaderLayer[] = [
     },
     sliders: {
       opacity: {
-        value: 0.4,
+        value: 0.7,
         legend: ["0", "1"],
         title: "Opacity",
         min: 0,
@@ -583,7 +583,7 @@ export const shaderLayers: ShaderLayer[] = [
       cutoffAngle: {
         title: "Angle",
         value: 0,
-        legend: ["30°", "34°", "39°", "45°", "50°"],
+        legend: ["30°", "34°", "39°", "47°", "55°"],
         min: 0,
         max: 90,
         hidden: false,

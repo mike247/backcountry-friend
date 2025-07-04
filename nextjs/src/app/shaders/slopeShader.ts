@@ -43,23 +43,19 @@ export const slopeModule = {
   }
 
    vec4 avalancheColor(float slope, float elevation) {
-    float t = clamp((slope)/90.0, 0.0, 1.0);
+    // float t = clamp((slope)/90.0, 0.0, 1.0);
+
+    float t = slope / 90.0;
 
     if (t < 0.33) {
       float k = t / 0.33;
       return mix(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), k); // Translucent
-    } else if (t < 0.38) {
-      float k = (t-0.33)/ 0.05;
-      return mix(vec4(1.0, 1.0, 0.0, custom.opacity), vec4(1.0, 0.0, 0.0, custom.opacity), k); // Yellow → Red
     } else if (t < 0.43) {
-      float k = (t - 0.38) / 0.05;
-      return mix(vec4(1.0, 0.0, 0.0, custom.opacity), vec4(0.0, 0.0, 0.0, custom.opacity), k); // red → black
-    } else if (t < 0.49) {
-      float k = (t - 0.43) / 0.06;
-      return mix(vec4(0.0, 0.0, 0.0, custom.opacity), vec4(1.0, 0.0, 0.0, custom.opacity), k); // black → red
+      float k = (t - 0.33)/ 0.1;
+      return mix(vec4(1.0, 1.0, 0.0, custom.opacity/2.0), vec4(1.0, 0.0, 0.0, custom.opacity), k); // Yellow → Red
     } else if (t < 0.55) {
-      float k = (t - 0.49) / 0.06;
-      return mix(vec4(1.0, 0.0, 0.0, custom.opacity), vec4(1.0, 1.0, 0.0, custom.opacity), k); // red → yellow
+      float k = (t - 0.43) / 0.12;
+      return mix(vec4(1.0, 0.0, 0.0, custom.opacity), vec4(1.0, 1.0, 0.0, custom.opacity/2.0), k); // red → black
     } else {
       return vec4(0.0, 0.0, 0.0, 0.0);
     }
