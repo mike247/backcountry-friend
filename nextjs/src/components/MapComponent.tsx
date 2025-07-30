@@ -16,6 +16,7 @@ import generateAvalancheLayers from "@/app/layers/avalancheLayers";
 import { ELEVATION_DECODER, maptilerUrlBuilder } from "@/reducers/utils";
 import LocateMeWidget from "./LocateMeWidget";
 import UserLayer from "@/app/layers/UserLayer";
+// import { computeStuff } from "./MetaData";
 
 const generateBaseLayer = (baseMap: LayerType, threeDimensions: boolean) => {
   return createTileLayer(baseMap, threeDimensions);
@@ -108,7 +109,7 @@ const MapComponent = () => {
   const twodController = new MapView({
     controller: {
       doubleClickZoom: true,
-      inertia: true,
+      inertia: false,
       touchRotate: false,
       dragMode: "pan",
       dragRotate: false,
@@ -134,7 +135,7 @@ const MapComponent = () => {
   const threedController = new MapView({
     controller: {
       doubleClickZoom: true,
-      inertia: true,
+      inertia: false,
       touchRotate: true,
       dragMode: "rotate",
       dragRotate: true,
@@ -170,11 +171,19 @@ const MapComponent = () => {
     color: [255, 255, 255],
   });
 
+  // const handleClick = ({ coordinate }: PickingInfo) => {
+  //   if (coordinate) {
+  //     const [lng, lat] = coordinate;
+  //     computeStuff(lat, lng);
+  //   }
+  // };
+
   return (
     <DeckGL
       key="deck-map"
       ref={deckRef}
       id="deckGl"
+      // onClick={handleClick}
       onDeviceInitialized={(device) => setDeckDevice(device)}
       initialViewState={
         map.threeDimensions // Dimension specific view conditions
